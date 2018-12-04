@@ -4,26 +4,43 @@ lineRegexp = compile(r"^\[\d+-\d+-\d+ \d+:(\d+)\] (.+)$")
 guardRegexp = compile(r"^Guard #(\d+) ")
 
 def most_minutes_guard(data):
-    minutes = {}
-    for line in sorted(data):
+    total_minutes = {}
+    for line in data:
         minute, text = lineRegexp.match(line).groups()
         minute = int(minute)
         matchGuard = guardRegexp.match(text)
         if matchGuard:
             lastGuard = int(matchGuard.group(1))
-            minutes.setdefault(lastGuard, 0)
+            total_minutes.setdefault(lastGuard, 0)
         elif text.startswith("falls"):
             beginSleep = minute
         elif text.startswith("wakes"):
             endSleep = minute
-            minutes[lastGuard] += endSleep - beginSleep
+            total_minutes[lastGuard] += endSleep - beginSleep
+    return max(total_minutes, key=lambda k: total_minutes[k])
+
+def best_minute(guard, data):
+    minutes = {}
+    for line in data:
+        minute, text = lineRegexp.match(line).groups()
+        minute = int(minute)
+        matchGuard = guardRegexp.match(text)
+        if matchGuard:
+            lastGuard = int(matchGuard.group(1))
+        elif guard == lastGuard and text.startswith("falls"):
+            beginSleep = minute
+        elif guard == lastGuard and text.startswith("wakes"):
+            endSleep = minute
+            for min in range(beginSleep, endSleep):
+                minutes.setdefault(min, 0)
+                minutes[min] += 1
     return max(minutes, key=lambda k: minutes[k])
 
-def best_minute(data):
-    pass
-
-def part1(data):
-    pass
+def guard_mult_minutes(data):
+    data.sort()
+    guard = most_minutes_guard(data)
+    minute = best_minute(guard, data)
+    return guard * minute
 
 test_data = [
     "[1518-11-01 00:00] Guard #10 begins shift", 
@@ -49,7 +66,17 @@ def test_most_minutes_guard():
     assert 10 == most_minutes_guard(test_data)
 
 def test_best_minute():
-    assert 24 == best_minute(test_data)
+    assert 24 == best_minute(10,test_data)
+
+def test_guard_mult_minutes():
+    assert 240 ==guard_mult_minutes(test_data)
+
+def part1(fname):
+    with open(fname, "r") as file:
+        return guard_mult_minutes(file.readlines())
 
 def test_part1():
-    assert 240 == part1(test_data)
+    assert 30630 == part1("input.txt")
+
+if __name__ == "__main__":
+    print("Part1: ", part1("input.txt"))
