@@ -42,6 +42,45 @@ def guard_mult_minutes(data):
     minute = best_minute(guard, data)
     return guard * minute
 
+def part1(fname):
+    with open(fname, "r") as file:
+        return guard_mult_minutes(file.readlines())
+
+
+def guard_and_minute_most_frequently_sleep(data):
+    data.sort()
+    counters = {}
+    for line in data:
+        minute, text = lineRegexp.match(line).groups()
+        minute = int(minute)
+        matchGuard = guardRegexp.match(text)
+        if matchGuard:
+            lastGuard = int(matchGuard.group(1))
+            counters.setdefault(lastGuard, {})
+        elif text.startswith("falls"):
+            beginSleep = minute
+        elif text.startswith("wakes"):
+            endSleep = minute
+            for minute in range(beginSleep, endSleep):
+                counters[lastGuard].setdefault(minute, 0)
+                counters[lastGuard][minute] += 1
+    return maxcoordinates(counters)
+
+def maxcoordinates(counters):
+    max_freq  = max_guard = max_minute = -1
+    for guard, minutes in counters.items():
+        for minute, freq in minutes.items():
+            if freq > max_freq:
+                max_freq = freq
+                max_guard = guard
+                max_minute = minute
+    return max_guard, max_minute
+
+def part2(fname):
+    with open(fname, "r") as file:
+        guard, minute =  guard_and_minute_most_frequently_sleep(file.readlines())
+        return guard * minute
+
 test_data = [
     "[1518-11-01 00:00] Guard #10 begins shift", 
     "[1518-11-01 00:05] falls asleep", 
@@ -71,12 +110,15 @@ def test_best_minute():
 def test_guard_mult_minutes():
     assert 240 ==guard_mult_minutes(test_data)
 
-def part1(fname):
-    with open(fname, "r") as file:
-        return guard_mult_minutes(file.readlines())
-
 def test_part1():
     assert 30630 == part1("input.txt")
 
+def test_guard_most_frequenly_sleep_same_minute():
+    assert (99, 45) == guard_and_minute_most_frequently_sleep(test_data)
+
+def test_part2():
+    assert 136571 == part2("input.txt")
+
 if __name__ == "__main__":
     print("Part1: ", part1("input.txt"))
+    print("Part2: ", part2("input.txt"))
