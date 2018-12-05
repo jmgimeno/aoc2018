@@ -44,8 +44,28 @@ def part1(fname):
         # Had to remove tha last char (newline?)
         return len(full_reaction(file.read()[:-1]))
 
-def test_part1():
-    assert 11108 == part1("input.txt")
+# def test_part1():
+#     assert 11108 == part1("input.txt")
+
+def best_polymer_reaction(polymer):
+    lengths = []
+    mers = { mer.lower() for mer in polymer }
+    for mer in mers:
+        reacted = full_reaction("".join(m for m in polymer if m.lower() != mer))
+        lengths.append(len(reacted))
+    return min(lengths)
+
+def test_best_polymer_reaction():
+    assert 4 == best_polymer_reaction("dabAcCaCBAcCcaDA")
+
+def part2(fname):
+    with open(fname, "r") as file:
+        # Had to remove tha last char (newline?)
+        return best_polymer_reaction(file.read()[:-1])
+
+# def test_part2():
+#     assert 5094 == part2("input.txt")
 
 if __name__ == "__main__":
     print("Part1: ", part1("input.txt"))
+    print("Part2: ", part2("input.txt"))
