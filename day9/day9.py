@@ -50,6 +50,12 @@ class CircularCursor:
                 nextCursor.current = nextCursor.dll.first
         return nextCursor
 
+    def inext(self, steps=1):
+        for _ in range(steps):
+            self.current = self.current.next
+            if self.current.next == self.dll.last:
+                self.current = self.dll.first
+
     def prev(self, steps=1):
         prevCursor = CircularCursor(self.dll, self.current)
         for _ in range(steps):
@@ -57,6 +63,12 @@ class CircularCursor:
                 prevCursor.current = prevCursor.dll.last.prev
             prevCursor.current = prevCursor.current.prev
         return prevCursor
+
+    def iprev(self, steps=1):
+        for _ in range(steps):
+            if self.current == self.dll.first:
+                self.current = self.dll.last.prev
+            self.current = self.current.prev
 
     def value(self):
         assert self.current != self.dll.last
@@ -138,7 +150,7 @@ def test_cursor_singleton():
     assert cursor == cursor.prev()
     assert cursor == cursor.next()
 
-def calc_part2(nplayers, last_marble):
+def calc_part2_immutable(nplayers, last_marble):
     scores = defaultdict(int)
     turns = cycle(range(1, nplayers+1))
     marbles = list(range(1, last_marble+1))
@@ -165,15 +177,69 @@ def calc_part2(nplayers, last_marble):
         #print("P: ", player, " C: ", current.value(), " L: ", circle.to_list())
     return max(scores.values())
 
-def test_calc_part2():
-    assert 32 == calc_part2(9, 25)
-    assert 8317 == calc_part2(10, 1618)
-    assert 146373 == calc_part2(13, 7999)
-    assert 2764 == calc_part2(17, 1104)
-    assert 54718 == calc_part2(21, 6111)
-    assert 37305 == calc_part2(30, 5807)
+def test_calc_part2_immutable():
+    assert 32 == calc_part2_immutable(9, 25)
+    assert 8317 == calc_part2_immutable(10, 1618)
+    assert 146373 == calc_part2_immutable(13, 7999)
+    assert 2764 == calc_part2_immutable(17, 1104)
+    assert 54718 == calc_part2_immutable(21, 6111)
+    assert 37305 == calc_part2_immutable(30, 5807)
+
+def calc_part2_mutable(nplayers, last_marble):
+    scores = defaultdict(int)
+    turns = cycle(range(1, nplayers+1))
+    marbles = list(range(1, last_marble+1))
+    #circle = deque([0])
+    circle = DoubleLinkedList([0])
+    #current = 0
+    current = circle.cursor()
+    #print("       C: ", current.value(), " L: ", circle.to_list())
+    for marble in marbles:
+        player = next(turns)
+        if marble % 23 != 0:
+            current.inext()
+            if not current.on_last():
+                current.inext()
+                circle.insert_after(current, marble)
+            else:
+                circle.append_right(marble)
+                current.inext()
+        else:
+            current.iprev(7)
+            scores[player] += marble + current.value()
+            circle.delete_after(current)
+        #print("P: ", player, " C: ", current.value(), " L: ", circle.to_list())
+    return max(scores.values())
+
+def test_calc_part2_mutable():
+    assert 32 == calc_part2_mutable(9, 25)
+    assert 8317 == calc_part2_mutable(10, 1618)
+    assert 146373 == calc_part2_mutable(13, 7999)
+    assert 2764 == calc_part2_mutable(17, 1104)
+    assert 54718 == calc_part2_mutable(21, 6111)
+    assert 37305 == calc_part2_mutable(30, 5807)
 
 if __name__ == "__main__":
+
+    import time
+
+    t1 = time.process_time()
     print("Part1 ", calc_part1(431, 70950))
-    print("Part1 ", calc_part2(431, 70950))
-    print("Part2 ", calc_part2(431, 7095000))
+    t2 = time.process_time()
+    print("Elapsed: ", t2 - 1)
+
+    print("Part1 ", calc_part2_immutable(431, 70950))
+    t3 = time.process_time()
+    print("Elapsed: ", t3 - t2)
+    
+    print("Part1 ", calc_part2_mutable(431, 70950))
+    t4 = time.process_time()
+    print("Elapsed: ", t4 - t3)
+
+    print("Part2 ", calc_part2_immutable(431, 7095000))
+    t5 = time.process_time()
+    print("Elapsed: ", t5 - t4)
+
+    print("Part2 ", calc_part2_mutable(431, 7095000))
+    t6 = time.process_time()
+    print("Elapsed: ", t6 - t5)
