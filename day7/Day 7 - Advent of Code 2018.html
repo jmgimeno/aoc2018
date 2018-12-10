@@ -5,7 +5,7 @@
 <title>Day 7 - Advent of Code 2018</title>
 <!--[if lt IE 9]><script src="/static/html5.js"></script><![endif]-->
 <link href='//fonts.googleapis.com/css?family=Source+Code+Pro:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css" href="/static/style.css?17"/>
+<link rel="stylesheet" type="text/css" href="/static/style.css?18"/>
 <link rel="stylesheet alternate" type="text/css" href="/static/highcontrast.css?0" title="High Contrast"/>
 <link rel="shortcut icon" href="/favicon.png"/>
 </head><!--
@@ -87,10 +87,10 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 
 -->
 <body>
-<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">(anonymous user #383524) <span class="star-count">13*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">y(</span><a href="/2018">2018</a><span class="title-event-wrap">)</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
+<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">(anonymous user #383524) <span class="star-count">20*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">y(</span><a href="/2018">2018</a><span class="title-event-wrap">)</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
 
 <div id="sidebar">
-<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://aoc.prodo.ai/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Alfie by Prodo</a> - a more immediate, feedback-driven coding experience. Try our online JavaScript playground with Advent of Code!</div></div>
+<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://www.winton.com/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Winton</a> - a data science and investment management company</div></div>
 </div><!--/sidebar-->
 
 <main>
@@ -127,8 +127,7 @@ C      -->D----->E
 <p>So, in this example, the correct order is <em><code>CABDFE</code></em>.</p>
 <p><em>In what order should the steps in your instructions be completed?</em></p>
 </article>
-<p>Your puzzle answer was <code>CHILFNMORYKGAQXUVBZPSJWDET</code>.</p><p class="day-success">The first half of this puzzle is complete! It provides one gold star: *</p>
-<article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>As you're about to begin construction, four of the Elves offer to help.  "The sun will set soon; it'll go faster if we work together."  Now, you need to account for multiple people working on steps simultaneously. If multiple steps are available, workers should still begin them in alphabetical order.</p>
+<p>Your puzzle answer was <code>CHILFNMORYKGAQXUVBZPSJWDET</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>As you're about to begin construction, four of the Elves offer to help.  "The sun will set soon; it'll go faster if we work together."  Now, you need to account for multiple people working on steps simultaneously. If multiple steps are available, workers should still begin them in alphabetical order.</p>
 <p>Each step takes 60 seconds plus an amount corresponding to its letter: A=1, B=2, C=3, and so on. So, step A takes <code>60+1=61</code> seconds, while step Z takes <code>60+26=86</code> seconds. No time is required between steps.</p>
 <p>To simplify things for the example, however, suppose you only have help from one Elf (a total of two workers) and that each step takes 60 fewer seconds (so that step A takes 1 second and step Z takes 26 seconds). Then, using the same instructions as above, this is how each second would be spent:</p>
 <pre><code>Second   Worker 1   Worker 2   Done
@@ -154,11 +153,12 @@ C      -->D----->E
 <p>In this example, it would take <em>15</em> seconds for two workers to complete these steps.</p>
 <p>With <em>5</em> workers and the <em>60+ second</em> step durations described above, <em>how long will it take to complete all of the steps?</em></p>
 </article>
-<p>Although it hasn't changed, you can still <a href="7/input" target="_blank">get your puzzle input</a>.</p>
-<form method="post" action="7/answer"><input type="hidden" name="level" value="2"/><p>Answer: <input type="text" name="answer" autocomplete="off"/> <input type="submit" value="[Submit]"/></p></form>
+<p>Your puzzle answer was <code>891</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2018">return to your advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="7/input" target="_blank">get your puzzle input</a>.</p>
 <p>You can also <span class="share">[Share<span class="share-content">on
-  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+Part+One+of+%22The+Sum+of+Its+Parts%22+%2D+Day+7+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F7&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
-  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F7&amp;title=I%27ve+completed+Part+One+of+%22The+Sum+of+Its+Parts%22+%2D+Day+7+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22The+Sum+of+Its+Parts%22+%2D+Day+7+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F7&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F7&amp;title=I%27ve+completed+%22The+Sum+of+Its+Parts%22+%2D+Day+7+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
 ></span>]</span> this puzzle.</p>
 </main>
 

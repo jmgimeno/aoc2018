@@ -5,7 +5,7 @@
 <title>Day 6 - Advent of Code 2018</title>
 <!--[if lt IE 9]><script src="/static/html5.js"></script><![endif]-->
 <link href='//fonts.googleapis.com/css?family=Source+Code+Pro:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-<link rel="stylesheet" type="text/css" href="/static/style.css?17"/>
+<link rel="stylesheet" type="text/css" href="/static/style.css?18"/>
 <link rel="stylesheet alternate" type="text/css" href="/static/highcontrast.css?0" title="High Contrast"/>
 <link rel="shortcut icon" href="/favicon.png"/>
 </head><!--
@@ -87,10 +87,10 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 
 -->
 <body>
-<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">(anonymous user #383524) <span class="star-count">11*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">/^</span><a href="/2018">2018</a><span class="title-event-wrap">$/</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
+<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">(anonymous user #383524) <span class="star-count">20*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">var y=</span><a href="/2018">2018</a><span class="title-event-wrap">;</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
 
 <div id="sidebar">
-<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://www.honeypot.io/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Honeypot.io</a> - Europe's Tech Job Platform where companies apply to you with salary and tech stack upfront!</div></div>
+<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://www.winton.com/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Winton</a> - a data science and investment management company</div></div>
 </div><!--/sidebar-->
 
 <main>
@@ -135,8 +135,7 @@ bbb.ffff<em>F</em>f
 <p>In this example, the areas of coordinates A, B, C, and F are infinite - while not shown here, their areas extend forever outside the visible grid. However, the areas of coordinates D and E are finite: D is closest to 9 locations, and E is closest to 17 (both including the coordinate's location itself).  Therefore, in this example, the size of the largest area is <em>17</em>.</p>
 <p><em>What is the size of the largest area</em> that isn't infinite?</p>
 </article>
-<p>Your puzzle answer was <code>3260</code>.</p><p class="day-success">The first half of this puzzle is complete! It provides one gold star: *</p>
-<article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>On the other hand, <em>if the coordinates are safe</em>, maybe the best you can do is try to find a <em>region</em> near as many coordinates as possible.</p>
+<p>Your puzzle answer was <code>3260</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>On the other hand, <em>if the coordinates are safe</em>, maybe the best you can do is try to find a <em>region</em> near as many coordinates as possible.</p>
 <p>For example, suppose you want the sum of the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a> to all of the coordinates to be <em>less than 32</em>.  For each location, add up the distances to all of the given coordinates; if the total of those distances is less than 32, that location is within the desired region. Using the same coordinates as above, the resulting region looks like this:</p>
 <pre><code>..........
 .A........
@@ -164,11 +163,12 @@ bbb.ffff<em>F</em>f
 <p>Your actual region will need to be much larger than this example, though, instead including all locations with a total distance of less than <em>10000</em>.</p>
 <p><em>What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?</em></p>
 </article>
-<p>Although it hasn't changed, you can still <a href="6/input" target="_blank">get your puzzle input</a>.</p>
-<form method="post" action="6/answer"><input type="hidden" name="level" value="2"/><p>Answer: <input type="text" name="answer" autocomplete="off"/> <input type="submit" value="[Submit]"/></p></form>
+<p>Your puzzle answer was <code>42535</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2018">return to your advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="6/input" target="_blank">get your puzzle input</a>.</p>
 <p>You can also <span class="share">[Share<span class="share-content">on
-  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+Part+One+of+%22Chronal+Coordinates%22+%2D+Day+6+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F6&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
-  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F6&amp;title=I%27ve+completed+Part+One+of+%22Chronal+Coordinates%22+%2D+Day+6+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22Chronal+Coordinates%22+%2D+Day+6+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F6&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F6&amp;title=I%27ve+completed+%22Chronal+Coordinates%22+%2D+Day+6+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
 ></span>]</span> this puzzle.</p>
 </main>
 
