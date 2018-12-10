@@ -9,6 +9,7 @@ name = "pypi"
 pylint = "*"
 pytest = "*"
 rope = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.7"
