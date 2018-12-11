@@ -10,5 +10,10 @@
 
 * day10
     - use numpy
-    - use simple function to minimize
+    - use simpler function to minimize
+
+* day 11
+    - optimize brute search
+
+
 
