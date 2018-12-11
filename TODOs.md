@@ -10,3 +10,5 @@
 
 * day10
     - use numpy
+    - use simple function to minimize
+
