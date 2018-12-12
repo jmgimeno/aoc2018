@@ -1,7 +1,7 @@
 from collections import namedtuple
 from itertools import takewhile
 
-State = namedtuple("State", ["first", "plants"])
+State = namedtuple("State", ["first", "plants", "generation"])
 
 def normalize(state):
     first_plant = 0
@@ -16,11 +16,11 @@ def normalize(state):
         last_plant -= 1
     plants = "..." + state.plants[first_plant:last_plant] + "..."
     first = state.first + first_plant - 3
-    return State(first, plants)
+    return State(first, plants, state.generation)
 
 def test_normalize():
-    expected_state = State(-3, "...#...#....#.....#..#..#..#...")
-    state = State(0, "#...#....#.....#..#..#..#")
+    expected_state = State(-3, "...#...#....#.....#..#..#..#...", 0)
+    state = State(0, "#...#....#.....#..#..#..#", 0)
     assert expected_state == normalize(state)
 
 def step(state, rules):
@@ -28,10 +28,10 @@ def step(state, rules):
     for idx in range(len(state.plants) - 4):
         current = state.plants[idx:idx+5]
         next_plants += rules.get(current, ".")
-    return normalize(State(state.first, next_plants))
+    return normalize(State(state.first, next_plants, state.generation+1))
 
 def test_step():
-    expected_state = State(-3, "...#...#....#.....#..#..#..#...")
+    expected_state = State(-3, "...#...#....#.....#..#..#..#...", 1)
     with open("test_input.txt", "r") as file:
         initial_state, rules = process(file) 
         actual_state = step(initial_state, rules)
@@ -39,14 +39,20 @@ def test_step():
 
 def simulate(state, rules, num_generations):
     seen_states = { state.plants : (state, 0) }
-    for num_gen in range(1, num_generations+1):
-        state = step(state, rules)
-        if state.plants in seen_states:
-            print("last:", seen_states[state.plants])
-            print("now:", (state, num_gen))
-            print("next:", (step(state, rules), num_gen+1))
-            break
-        seen_states[state.plants] = state, num_gen
+    while state.generation < num_generations:
+        new_state = step(state, rules)
+        if new_state.plants in seen_states:
+            period = new_state.generation - seen_states[state.plants].generation
+            delta = new_state.first - seen_states[state.plants].first
+            remaining = num_generations - new_state.generation
+            repetitions = remaining // period
+            state = State(
+                new_state.first + delta * repetitions, 
+                new_state.plants, 
+                new_state.generation + repetitions * period)
+            seen_states = {}
+        else:    
+            state = seen_states[state.plants] = new_state
     return state
 
 def sum_plant_positions(state):
@@ -60,7 +66,7 @@ def sum_plant_positions(state):
 
 def process(file):
     line = file.readline()
-    initial_state = State(-3, "..." + line[len("initial state: "):].strip() + "...")
+    initial_state = normalize(State(0, line[len("initial state: "):].strip(), 0))
     file.readline()
     rules = dict(parse_rule(line.strip()) for line in file)
     return initial_state, rules
@@ -69,7 +75,7 @@ def parse_rule(line):
     return line[:5], line[-1:]
 
 def test_process():
-    expected_state = State(-3, "...#..#.#..##......###...###...")
+    expected_state = State(-3, "...#..#.#..##......###...###...", 0)
     expected_rules = { "...##" : "#",
                        "..#.." : "#",
                        ".#..." : "#",
@@ -83,7 +89,7 @@ def test_process():
                        "##.##" : "#",
                        "###.." : "#",
                        "###.#" : "#",
-                       "####." : "#" }
+                       "####." : "#"  }
 
     with open("test_input.txt", "r") as file:
         actual_state, actual_rules = process(file)
