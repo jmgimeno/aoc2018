@@ -12,8 +12,8 @@
     - use numpy
     - use simpler function to minimize
 
-* day 11
+* day11
     - optimize brute search
 
-
-
+* day12 
+    - fix problem with periods longer than one by computing the state you'll get into when entering the last period fragment at the end
