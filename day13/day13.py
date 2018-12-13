@@ -9,46 +9,46 @@ TURN_LEFT, GO_STRAIGH, TURN_RIGHT = range(3)
 def next(turn):
     return (turn + 1) % 3
 
-Car = namedtuple("Car", "x, y, orientation, next_turn")
+Cart = namedtuple("Cart", "x, y, orientation, next_turn")
 
-def out_of_lane(car):
-    raise Exception("out of lane", car)
+def out_of_lane(cart):
+    raise Exception("out of lane", cart)
 
-def horizontal(car):
-    if car.orientation == RIGHT:
-        return car._replace(x=car.x+1)
-    elif car.orientation == LEFT:
-        return car._replace(x=car.x-1)
+def horizontal(cart):
+    if cart.orientation == RIGHT:
+        return cart._replace(x=cart.x+1)
+    elif cart.orientation == LEFT:
+        return cart._replace(x=cart.x-1)
     else:
-        raise Exception("moving %s in horizontal lane", "UP" if car.orientation == UP else "DOWN")
+        raise Exception("moving %s in horizontal lane", "UP" if cart.orientation == UP else "DOWN")
 
-def vertical(car):
-    if car.orientation == DOWN:
-        return car._replace(y=car.y+1)
-    elif car.orientation == UP:
-        return car._replace(y=car.y-1)
+def vertical(cart):
+    if cart.orientation == DOWN:
+        return cart._replace(y=cart.y+1)
+    elif cart.orientation == UP:
+        return cart._replace(y=cart.y-1)
     else:
-        raise Exception("moving %s in vertical lane", "LEFT" if car.orientation == LEFT else "RIGHT")
+        raise Exception("moving %s in vertical lane", "LEFT" if cart.orientation == LEFT else "RIGHT")
 
-def diagonal(car):
-    if car.orientation == UP:
-        return car._replace(y=car.y-1, orientation=LEFT)
-    elif car.orientation == RIGHT:
-        return car._replace(x=car.x+1, orientation=DOWN)
-    elif car.orientation == DOWN:
-        return car._replace(y=car.y+1, orientation=RIGHT)
+def diagonal(cart):
+    if cart.orientation == UP:
+        return cart._replace(y=cart.y-1, orientation=LEFT)
+    elif cart.orientation == RIGHT:
+        return cart._replace(x=cart.x+1, orientation=DOWN)
+    elif cart.orientation == DOWN:
+        return cart._replace(y=cart.y+1, orientation=RIGHT)
     else:
-        return car._replace(x=car.x-1, orientation=UP)
+        return cart._replace(x=cart.x-1, orientation=UP)
 
-def contra_diagonal(car):
-    if car.orientation == UP:
-        return car._replace(y=car.y-1, orientation=RIGHT)
-    elif car.orientation == RIGHT:
-        return car._replace(x=car.x+1, orientation=UP)
-    elif car.orientation == DOWN:
-        return car._replace(y=car.y+1, orientation=LEFT)
+def contra_diagonal(cart):
+    if cart.orientation == UP:
+        return cart._replace(y=cart.y-1, orientation=RIGHT)
+    elif cart.orientation == RIGHT:
+        return cart._replace(x=cart.x+1, orientation=UP)
+    elif cart.orientation == DOWN:
+        return cart._replace(y=cart.y+1, orientation=LEFT)
     else:
-        return car._replace(x=car.x-1, orientation=DOWN)
+        return cart._replace(x=cart.x-1, orientation=DOWN)
 
 next_orientation = { 
     UP : {
@@ -65,17 +65,17 @@ next_orientation = {
         TURN_RIGHT : UP }, 
     }
 
-def crossing(car):
-    orientation = next_orientation[car.orientation].get(car.next_turn, car.orientation)
-    next_turn = next(car.next_turn)
-    if car.orientation == UP:
-        return car._replace(y=car.y-1, orientation=orientation, next_turn=next_turn)
-    elif car.orientation == RIGHT:
-        return car._replace(x=car.x+1, orientation=orientation, next_turn=next_turn)
-    elif car.orientation == DOWN:
-        return car._replace(y=car.y+1, orientation=orientation, next_turn=next_turn)
+def crossing(cart):
+    orientation = next_orientation[cart.orientation].get(cart.next_turn, cart.orientation)
+    next_turn = next(cart.next_turn)
+    if cart.orientation == UP:
+        return cart._replace(y=cart.y-1, orientation=orientation, next_turn=next_turn)
+    elif cart.orientation == RIGHT:
+        return cart._replace(x=cart.x+1, orientation=orientation, next_turn=next_turn)
+    elif cart.orientation == DOWN:
+        return cart._replace(y=cart.y+1, orientation=orientation, next_turn=next_turn)
     else:
-        return car._replace(x=car.x-1, orientation=orientation, next_turn=next_turn)
+        return cart._replace(x=cart.x-1, orientation=orientation, next_turn=next_turn)
 
 translate_orientation = { "^" : UP, ">" : RIGHT, "v" : DOWN, "<" : LEFT }
 
@@ -104,25 +104,25 @@ def test_parse_lines_test2():
                     '  \\------/   ']
         assert expected == parse_lines(test2)
 
-def parse_cars(lines):
-    cars = []
+def parse_carts(lines):
+    carts = []
     for y, row in enumerate(lines):
         for x, c in enumerate(row):
             if c in { '>', '<', '^', 'v' }:
-                cars.append(Car(x=x, y=y, orientation=translate_orientation[c], next_turn=0))
-    return cars
+                carts.append(Cart(x=x, y=y, orientation=translate_orientation[c], next_turn=0))
+    return carts
 
-def test_parse_cars_test1():
+def test_parse_carts_test1():
     with open("test1.txt", "r") as test1:
-        expected = [Car(x=0, y=1, orientation=DOWN, next_turn=0),
-                    Car(x=0, y=5, orientation=UP, next_turn=0)]
-        assert expected == parse_cars(parse_lines(test1))
+        expected = [Cart(x=0, y=1, orientation=DOWN, next_turn=0),
+                    Cart(x=0, y=5, orientation=UP, next_turn=0)]
+        assert expected == parse_carts(parse_lines(test1))
 
-def test_parse_cars_test2():
+def test_parse_carts_test2():
     with open("test2.txt", "r") as test2:
-        expected = [Car(x=2, y=0, orientation=RIGHT, next_turn=0),
-                    Car(x=9, y=3, orientation=DOWN, next_turn=0)]
-        assert expected == parse_cars(parse_lines(test2))
+        expected = [Cart(x=2, y=0, orientation=RIGHT, next_turn=0),
+                    Cart(x=9, y=3, orientation=DOWN, next_turn=0)]
+        assert expected == parse_carts(parse_lines(test2))
 
 def parse_grid(lines):
     grid = []
@@ -141,65 +141,65 @@ def test_parse_grid_test1():
 def parse(fname):
     with open(fname, "r") as f:
         lines = parse_lines(f)
-        cars = parse_cars(lines)
+        carts = parse_carts(lines)
         grid = parse_grid(lines)
-    return cars, grid
+    return carts, grid
 
-def move(car, grid):
-    if car.orientation == UP:
-        x, y = car.x, car.y-1
-    elif car.orientation == RIGHT:
-        x, y = car.x+1, car.y
-    elif car.orientation == DOWN:
-        x, y = car.x, car.y+1
+def move(cart, grid):
+    if cart.orientation == UP:
+        x, y = cart.x, cart.y-1
+    elif cart.orientation == RIGHT:
+        x, y = cart.x+1, cart.y
+    elif cart.orientation == DOWN:
+        x, y = cart.x, cart.y+1
     else:
-        x, y = car.x-1, car.y
-    return grid[y][x](car)
+        x, y = cart.x-1, cart.y
+    return grid[y][x](cart)
 
-def calc_part1(cars, grid):
+def calc_part1(carts, grid):
     while True:
-        cars.sort(key=lambda car: (car.y, car.x))
-        positions = { (car.x, car.y) for car in cars }
-        next_cars = []
-        for car in cars:
-            positions.remove((car.x, car.y))
-            new_car = move(car, grid)
-            if (new_car.x, new_car.y) in positions:
-                return (new_car.x, new_car.y)
-            positions.add((new_car.x, new_car.y))
-            next_cars.append(new_car)
-        cars = next_cars
+        carts.sort(key=lambda cart: (cart.y, cart.x))
+        positions = { (cart.x, cart.y) for cart in carts }
+        next_carts = []
+        for cart in carts:
+            positions.remove((cart.x, cart.y))
+            new_cart = move(cart, grid)
+            if (new_cart.x, new_cart.y) in positions:
+                return (new_cart.x, new_cart.y)
+            positions.add((new_cart.x, new_cart.y))
+            next_carts.append(new_cart)
+        carts = next_carts
 
 def part1(fname):
-    cars, grid = parse(fname)
-    return calc_part1(cars, grid)
+    carts, grid = parse(fname)
+    return calc_part1(carts, grid)
 
 def test_part1():
     assert (0, 3) == part1("test1.txt")
     assert (7, 3) == part1("test2.txt")
 
-def calc_part2(cars, grid):
+def calc_part2(carts, grid):
     while True:
-        if len(cars) == 1:
-            return cars[0].x, cars[0].y
-        cars.sort(key=lambda car: (car.y, car.x))
-        positions = { (car.x, car.y) for car in cars }
-        next_cars = []
-        for car in cars:
-            if (car.x, car.y) not in positions:
+        if len(carts) == 1:
+            return carts[0].x, carts[0].y
+        carts.sort(key=lambda cart: (cart.y, cart.x))
+        occupied_positions = { (cart.x, cart.y) for cart in carts }
+        next_carts = []
+        for cart in carts:
+            if (cart.x, cart.y) not in occupied_positions:
                 continue
-            positions.remove((car.x, car.y))
-            new_car = move(car, grid)
-            if (new_car.x, new_car.y) in positions:
-                positions.remove((new_car.x, new_car.y))
+            occupied_positions.remove((cart.x, cart.y))
+            new_car = move(cart, grid)
+            if (new_car.x, new_car.y) in occupied_positions:
+                occupied_positions.remove((new_car.x, new_car.y))
             else:
-                positions.add((new_car.x, new_car.y))
-            next_cars.append(new_car)
-        cars = [car for car in next_cars if (car.x, car.y) in positions]
+                occupied_positions.add((new_car.x, new_car.y))
+            next_carts.append(new_car)
+        carts = [cart for cart in next_carts if (cart.x, cart.y) in occupied_positions]
 
 def part2(fname):
-    cars, grid = parse(fname)
-    return calc_part2(cars, grid)
+    carts, grid = parse(fname)
+    return calc_part2(carts, grid)
 
 def test_part2():
     assert (6, 4) == part2("test3.txt")
