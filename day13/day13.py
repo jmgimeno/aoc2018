@@ -156,8 +156,7 @@ def move(car, grid):
         x, y = car.x-1, car.y
     return grid[y][x](car)
 
-def simulate(cars, grid):
-    tick = 0
+def calc_part1(cars, grid):
     while True:
         cars.sort(key=lambda car: (car.y, car.x))
         positions = { (car.x, car.y) for car in cars }
@@ -170,19 +169,41 @@ def simulate(cars, grid):
             positions.add((new_car.x, new_car.y))
             next_cars.append(new_car)
         cars = next_cars
-        tick += 1
-
-def test_simulate_test1():
-    cars, grid = parse("test1.txt")
-    assert (0, 3) == simulate(cars, grid)
-
-def test_simulate_test2():
-    cars, grid = parse("test2.txt")
-    assert (7, 3) == simulate(cars, grid)
 
 def part1(fname):
     cars, grid = parse(fname)
-    return simulate(cars, grid)
+    return calc_part1(cars, grid)
+
+def test_part1():
+    assert (0, 3) == part1("test1.txt")
+    assert (7, 3) == part1("test2.txt")
+
+def calc_part2(cars, grid):
+    while True:
+        if len(cars) == 1:
+            return cars[0].x, cars[0].y
+        cars.sort(key=lambda car: (car.y, car.x))
+        positions = { (car.x, car.y) for car in cars }
+        next_cars = []
+        for car in cars:
+            if (car.x, car.y) not in positions:
+                continue
+            positions.remove((car.x, car.y))
+            new_car = move(car, grid)
+            if (new_car.x, new_car.y) in positions:
+                positions.remove((new_car.x, new_car.y))
+            else:
+                positions.add((new_car.x, new_car.y))
+            next_cars.append(new_car)
+        cars = [car for car in next_cars if (car.x, car.y) in positions]
+
+def part2(fname):
+    cars, grid = parse(fname)
+    return calc_part2(cars, grid)
+
+def test_part2():
+    assert (6, 4) == part2("test3.txt")
 
 if __name__ == "__main__":
     print("Part1", part1("input.txt"))
+    print("Part2", part2("input.txt"))
