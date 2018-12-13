@@ -17,3 +17,6 @@
 
 * day12 
     - fix problem with periods longer than one by computing the state you'll get into when entering the last period fragment at the end
+
+* day13:
+    - use also functions to model orientations (e.g, an orient function gives the position to next position in this orientation)
