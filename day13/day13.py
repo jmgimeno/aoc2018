@@ -159,14 +159,14 @@ def move(cart, grid):
 def calc_part1(carts, grid):
     while True:
         carts.sort(key=lambda cart: (cart.y, cart.x))
-        positions = { (cart.x, cart.y) for cart in carts }
+        occupied_positions = { (cart.x, cart.y) for cart in carts }
         next_carts = []
         for cart in carts:
-            positions.remove((cart.x, cart.y))
+            occupied_positions.remove((cart.x, cart.y))
             new_cart = move(cart, grid)
-            if (new_cart.x, new_cart.y) in positions:
+            if (new_cart.x, new_cart.y) in occupied_positions:
                 return (new_cart.x, new_cart.y)
-            positions.add((new_cart.x, new_cart.y))
+            occupied_positions.add((new_cart.x, new_cart.y))
             next_carts.append(new_cart)
         carts = next_carts
 
