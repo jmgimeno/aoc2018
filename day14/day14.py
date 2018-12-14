@@ -11,9 +11,9 @@ def scoreboards(recipe0, recipe1):
             recipes.append(sum_recipes // 10)
             yield recipes
         recipes.append(sum_recipes % 10)
-        yield recipes
         elf0 = (elf0 + recipe0 + 1 ) % len(recipes)
         elf1 = (elf1 + recipe1 + 1 ) % len(recipes)
+        yield recipes
 
 def part1(number):
     scoreboard_gen = scoreboards(3, 7)

@@ -25,4 +25,4 @@
   * use translation and transformation matrices for operating on the positions
 
 * day14:
-  * implement in C++
+  * improve the C++ solution to a more idiomatic code
