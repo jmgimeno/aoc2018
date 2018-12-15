@@ -37,11 +37,12 @@ class Simulation:
     def turn_order(self):
         return sorted(self.units, key=lambda unit: (unit.y, unit.x))
 
+    def possible_targets(self, unit):
+        return {target for target in self.units if type(target) != type(unit)}
+
     def in_range(self, unit):
-        possible_targets = {
-            other for other in self.units if type(other) != type(unit)}
         return {(x, y)
-                for target in possible_targets
+                for target in self.possible_targets(unit)
                 for (x, y) in adjacent_to(target) - self.occupied_positions
                 if self.cave[y][x]}
 
@@ -60,9 +61,13 @@ class Simulation:
     def reachable(self, unit):
         return {position for position in self.in_range(unit) if self.can_reach((unit.x, unit.y), position)}
 
-    def distance(self, begin, end, visited=None):
+    def distance(self, unit_or_tuple, end, visited=None):
         if visited is None:
             visited = set()
+        if isinstance(unit_or_tuple, tuple):
+            begin = unit_or_tuple
+        else:
+            begin = unit_or_tuple.x, unit_or_tuple.y
         if begin == end:
             return 0
         next_positions = {(x, y)
@@ -72,22 +77,26 @@ class Simulation:
             return float("+inf")
         return 1 + min(self.distance(step, end, visited | {begin}) for step in next_positions)
 
-    def nearest(self, begin):
+    def nearest(self, unit):
         closests = set()
         min_distance = float("+inf")
-        for end in self.in_range(begin):
-            d = self.distance(begin, end)
+        for end in self.in_range(unit):
+            d = self.distance(unit, end)
             if d < min_distance:
                 closests = {end}
                 min_distance = d
             elif d == min_distance:
                 closests.add(end)
         return closests
-        
+
+    def chosen(self, unit):
+        sorted_nearest = sorted(self.nearest(
+            unit), key=lambda pos: (pos[1], pos[0]))
+        return sorted_nearest[0] if len(sorted_nearest) > 0 else None
 
 
 def adjacent_to(unit_or_tuple):
-    if type(unit_or_tuple) == tuple:
+    if isinstance(unit_or_tuple, tuple):
         x, y = unit_or_tuple
     else:
         x, y = unit_or_tuple.x, unit_or_tuple.y
@@ -143,6 +152,7 @@ def test_reachable(simulation):
     assert {(3, 1), (2, 2), (1, 3), (3, 3)} \
         == simulation.reachable(Elf(x=1, y=1))
 
+
 def test_min_distance(simulation):
     assert 0 == simulation.distance((1, 1), (1, 1))
     assert 2 == simulation.distance((1, 1), (3, 1))
@@ -153,5 +163,10 @@ def test_min_distance(simulation):
     assert float("+inf") == simulation.distance((1, 1), (5, 2))
     assert float("+inf") == simulation.distance((1, 1), (0, 0))
 
-def _test_nearest(simulation):
-    assert {(3, 1), (2, 2), (1, 3)} == simulation.nearest((1,1))
+
+def test_nearest(simulation):
+    assert {(3, 1), (2, 2), (1, 3)} == simulation.nearest(Elf(x=1, y=1))
+
+
+def test_chosen(simulation):
+    assert (3, 1) == simulation.chosen(Elf(x=1, y=1))
