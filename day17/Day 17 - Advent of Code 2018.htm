@@ -87,10 +87,10 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 
 -->
 <body>
-<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">30*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap"></span><a href="/2018">2018</a><span class="title-event-wrap"></span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
+<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">32*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">&lt;y&gt;</span><a href="/2018">2018</a><span class="title-event-wrap">&lt;/y&gt;</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
 
 <div id="sidebar">
-<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://clubhouse.io/?utm_source=spon&amp;utm_medium=ch&amp;utm_campaign=aoc2018" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Clubhouse</a> - The first project management platform for software development that brings everyone on every team together to build better products. AoC participants get two free months by signing up at r.clbh.se/mze9q9P Also, we're hiring!</div></div>
+<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://aoc.prodo.ai/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Alfie by Prodo</a> - a more immediate, feedback-driven coding experience. Try our online JavaScript playground with Advent of Code!</div></div>
 </div><!--/sidebar-->
 
 <main>
@@ -231,11 +231,16 @@ y=13, x=498..504
 <p>So, in the example above, counting both water at rest (<code>~</code>) and other sand tiles the water can hypothetically reach (<code>|</code>), the total number of tiles the water can reach is <code><em>57</em></code>.</p>
 <p><em>How many tiles can the water reach</em> within the range of <code>y</code> values in your scan?</p>
 </article>
-<p>To begin, <a href="17/input" target="_blank">get your puzzle input</a>.</p>
-<form method="post" action="17/answer"><input type="hidden" name="level" value="1"/><p>Answer: <input type="text" name="answer" autocomplete="off"/> <input type="submit" value="[Submit]"/></p></form>
+<p>Your puzzle answer was <code>30384</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>After <span title="A very long time ago, I built something similar to this in QBasic. SCREEN 13 forever!">a very long time</span>, the water spring will run dry. How much water will be retained?</p>
+<p>In the example above, water that won't eventually drain out is shown as <code>~</code>, a total of <code><em>29</em></code> tiles.</p>
+<p><em>How many water tiles are left</em> after the water spring stops producing water and all remaining water not at rest has drained?</p>
+</article>
+<p>Your puzzle answer was <code>24479</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2018">return to your advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="17/input" target="_blank">get your puzzle input</a>.</p>
 <p>You can also <span class="share">[Share<span class="share-content">on
-  <a href="https://twitter.com/intent/tweet?text=%22Reservoir+Research%22+%2D+Day+17+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F17&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
-  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F17&amp;title=%22Reservoir+Research%22+%2D+Day+17+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22Reservoir+Research%22+%2D+Day+17+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F17&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F17&amp;title=I%27ve+completed+%22Reservoir+Research%22+%2D+Day+17+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
 ></span>]</span> this puzzle.</p>
 </main>
 

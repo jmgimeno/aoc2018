@@ -32,3 +32,6 @@
     * Unit(x,y,type_,hit_points)
     * array of units
     * matrix of characters: # wall . space n índex of unit
+    
+* day17
+  * lots of refactoring are needed
