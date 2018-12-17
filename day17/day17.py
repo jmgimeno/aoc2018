@@ -20,7 +20,8 @@ class Ground:
     def _get_limits(self):
         self.min_x = min(l.min_x for l in self.parsed_lines) - 1
         self.max_x = max(l.max_x for l in self.parsed_lines) + 1
-        self.min_y = min(min(l.min_y for l in self.parsed_lines), 0)
+        self.real_min_y = min(l.min_y for l in self.parsed_lines)
+        self.min_y = min(self.real_min_y, 0)
         self.max_y = max(l.max_y for l in self.parsed_lines)
         self.width = self.max_x - self.min_x + 1
         self.height = self.max_y - self.min_y + 1
@@ -51,10 +52,10 @@ class Ground:
 
     def find_bottom(self, x, y, bottom):
         xx_min = x
-        while self.get(xx_min-1, y) == bottom:
+        while self.get(xx_min - 1, y) == bottom:
             xx_min -= 1
         xx_max = x
-        while self.get(xx_max+ 1, y) == bottom:
+        while self.get(xx_max + 1, y) == bottom:
             xx_max += 1
         return xx_min, xx_max
 
@@ -80,33 +81,37 @@ class Ground:
             if y == self.max_y:
                 continue
 
-            if self.get(x, y + 1) == '.':
-                self.set(x, y + 1, '|')
-                yield
-                self.drops.append((x, y))
-                self.drops.append((x, y + 1))
-
-            if self.get(x, y + 1) in ('#', '~'):
-                bottom = self.get(x, y + 1)
-                bottom_min, bottom_max = self.find_bottom(x, y + 1, bottom)
-                sand_over = self.find_sand(x, y)
-                if sand_over:
-                    sand_min, sand_max = sand_over
-                    if bottom_min <= sand_min and sand_max <= bottom_max:
-                        for xx in range(sand_min, sand_max + 1):
-                            self.set(xx, y, '~')
+            if self.get(x, y) == '+':
+                if self.get(x, y + 1) == '.':
+                    self.set(x, y + 1, '|')
+                    yield
+                    self.drops.append((x, y + 1))
+            elif self.get(x, y) == '|':
+                if self.get(x, y + 1) == '.':
+                    self.set(x, y + 1, '|')
+                    yield
+                    self.drops.append((x, y))
+                    self.drops.append((x, y + 1))
+                elif self.get(x, y + 1) in ('#', '~'):
+                    if self.get(x - 1, y) == '.':
+                        self.set(x - 1, y, '|')
                         yield
-            if x > self.min_x and self.get(x - 1, y) == '.' and self.get(x, y + 1) in ('#', '~'):
-                self.set(x - 1, y, '|')
-                self.drops.append((x, y))
-                self.drops.append((x - 1, y))
-                yield
-            if x < self.max_x and self.get(x + 1, y) == '.' and self.get(x, y + 1) in ('#', '~'):
-                self.set(x + 1, y, '|')
-                self.drops.append((x, y))
-                self.drops.append((x + 1, y))
-                yield
+                        self.drops.append((x - 1, y))
+                    elif self.get(x - 1, y) == '#' and self.get(x,y) == '|':
+                        right = self.find_right(x, y, '|')
+                        if right:
+                            self.rest_water(x, right, y)
+                            yield
 
+                    if self.get(x + 1, y) == '.':
+                        self.set(x + 1, y, '|')
+                        yield
+                        self.drops.append((x + 1, y))
+                    elif self.get(x + 1, y) == '#' and self.get(x,y) == '|':
+                        left = self.find_left(x, y, '|')
+                        if left:
+                            self.rest_water(left, x, y)
+                            yield
 
     def run(self, debug=False):
         if debug:
@@ -121,6 +126,35 @@ class Ground:
 
     def count(self):
         return sum(1 for row in self.slice for c in row if c in ('|', '~'))
+
+    def count_dry(self):
+        return sum(1 for row in self.slice for c in row if c == '~')
+
+    def find_right(self, x, y, char):
+        assert self.get(x, y) == char
+        assert self.get(x, y + 1) in ('#', '~')
+        x_max = x
+        while self.get(x_max + 1, y) == char and self.get(x_max + 1, y + 1) in ('#', '~'):
+            x_max += 1
+        if self.get(x_max + 1, y) == '#' and self.get(x_max + 1, y + 1) in ('#', '~'):
+            return x_max
+        else:
+            return None
+
+    def find_left(self, x, y, char):
+        assert self.get(x, y) == char
+        assert self.get(x, y + 1) in ('#', '~')
+        x_min = x
+        while self.get(x_min - 1, y) == char and self.get(x_min - 1, y + 1) in ('#', '~'):
+            x_min -= 1
+        if self.get(x_min - 1, y) == '#' and self.get(x_min - 1, y + 1) in ('#', '~'):
+            return x_min
+        else:
+            return None
+
+    def rest_water(self, x_min, x_max, y):
+        for x in range(x_min, x_max + 1):
+            self.set(x, y, '~')
 
 
 def parse_line(line):
@@ -197,6 +231,7 @@ def test_count():
         test_ground.run()
         assert 57 == test_ground.count()
 
+
 # Problematic case
 
 def test_problem():
@@ -221,11 +256,13 @@ def test_problem():
         test_ground = Ground(line.strip() for line in test)
         test_ground.print()
         assert expected == test_ground.show()
-        test_ground.run(True)
+        test_ground.run()
+        test_ground.print()
+
 
 if __name__ == '__main__':
     with open('input.txt', 'r') as file:
         ground = Ground(line.strip() for line in file)
         ground.run()
-        ground.print()
-        print("Part1:", ground.count())
+        print("Part1:", ground.count() - ground.real_min_y + 1)
+        print("Part2:", ground.count_dry())
