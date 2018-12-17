@@ -51,10 +51,10 @@ class Ground:
 
     def find_bottom(self, x, y, bottom):
         xx_min = x
-        while self.get(xx_min - 1, y) == bottom:
+        while self.get(xx_min-1, y) == bottom:
             xx_min -= 1
         xx_max = x
-        while self.get(xx_max + 1, y) == bottom:
+        while self.get(xx_max+ 1, y) == bottom:
             xx_max += 1
         return xx_min, xx_max
 
@@ -70,17 +70,22 @@ class Ground:
         else:
             return None
 
-    def run(self):
+    def steps(self):
         while True:
             if len(self.drops) == 0:
                 return
+
             (x, y) = self.drops.pop()
+
             if y == self.max_y:
                 continue
+
             if self.get(x, y + 1) == '.':
                 self.set(x, y + 1, '|')
+                yield
                 self.drops.append((x, y))
                 self.drops.append((x, y + 1))
+
             if self.get(x, y + 1) in ('#', '~'):
                 bottom = self.get(x, y + 1)
                 bottom_min, bottom_max = self.find_bottom(x, y + 1, bottom)
@@ -90,12 +95,25 @@ class Ground:
                     if bottom_min <= sand_min and sand_max <= bottom_max:
                         for xx in range(sand_min, sand_max + 1):
                             self.set(xx, y, '~')
+                        yield
             if x > self.min_x and self.get(x - 1, y) == '.' and self.get(x, y + 1) in ('#', '~'):
                 self.set(x - 1, y, '|')
+                self.drops.append((x, y))
                 self.drops.append((x - 1, y))
+                yield
             if x < self.max_x and self.get(x + 1, y) == '.' and self.get(x, y + 1) in ('#', '~'):
                 self.set(x + 1, y, '|')
+                self.drops.append((x, y))
                 self.drops.append((x + 1, y))
+                yield
+
+
+    def run(self, debug=False):
+        if debug:
+            self.print()
+        for _ in self.steps():
+            if debug:
+                self.print()
 
     def print(self):
         print()
@@ -179,6 +197,31 @@ def test_count():
         test_ground.run()
         assert 57 == test_ground.count()
 
+# Problematic case
+
+def test_problem():
+    expected = """\
+..........+..........
+.....................
+.#.................#.
+.#.................#.
+.#.................#.
+.#.................#.
+.#.................#.
+.#.................#.
+.#......######.....#.
+.#......#....#.....#.
+.#......#....#.....#.
+.#......######.....#.
+.#.................#.
+.#.................#.
+.###################."""
+
+    with open('problem_input.txt', 'r') as test:
+        test_ground = Ground(line.strip() for line in test)
+        test_ground.print()
+        assert expected == test_ground.show()
+        test_ground.run(True)
 
 if __name__ == '__main__':
     with open('input.txt', 'r') as file:
