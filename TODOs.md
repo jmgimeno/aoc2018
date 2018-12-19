@@ -35,3 +35,6 @@
     
 * day17
   * lots of refactoring are needed
+  
+* day19
+  * implement a real factorization algorithm
