@@ -1,6 +1,17 @@
 import collections
 
 
+class Expedition:
+
+    def __init__(self, regexp):
+        self.walkers = []
+        self.explored = collections.defaultdict(lambda: float('inf'))
+
+    def explore(self):
+        walker = Walker(0,0, self.explored)
+        self.walkers.append(walker)
+        while len()
+
 class Walker:
 
     def __init__(self, x=0, y=0, distances=None):
