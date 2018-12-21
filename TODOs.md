@@ -32,12 +32,13 @@
     * Unit(x,y,type_,hit_points)
     * array of units
     * matrix of characters: # wall . space n índex of unit
-    
+
 * day17
   * lots of refactoring are needed
   
 * day19
   * implement a real factorization algorithm
+  * enhance compilar to generate code as the hand-made cc program in day21
   
 * day20
   * Preprocess parentheses and create an estructure of 
