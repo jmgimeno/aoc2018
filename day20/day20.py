@@ -10,7 +10,7 @@ class Expedition:
     def explore(self):
         walker = Walker(0,0, self.explored)
         self.walkers.append(walker)
-        while len()
+        # To be continued ...
 
 class Walker:
 

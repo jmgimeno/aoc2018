@@ -38,3 +38,8 @@
   
 * day19
   * implement a real factorization algorithm
+  
+* day20
+  * Preprocess parentheses and create an estructure of 
+  (open_pos, close_pos, [bar_pos]) and then use walkers
+  
