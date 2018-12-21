@@ -41,6 +41,7 @@
   * enhance compilar to generate code as the hand-made cc program in day21
   
 * day20
-  * Preprocess parentheses and create an estructure of 
-  (open_pos, close_pos, [bar_pos]) and then use walkers
+  * first parse regexp and then traverse it doing the exploration?
+  
+
   
