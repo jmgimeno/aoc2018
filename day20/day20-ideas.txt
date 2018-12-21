@@ -1,0 +1,26 @@
+An exploration with only one leg:
+
+* ^WNE$
+  012345
+
+    - (1,1) until 5
+    - start at (1,1)
+    - find first open paren
+        - not found => end until position 5 where it ends
+
+* ^ENWWW(NEEE|SSE(EE|N))$
+  012345678901234567890123
+
+    - (0,0) to 23
+    - start at (1,1)
+    - find first open paren
+        - found at 6 => first leg from (0,0) to 6
+            - options 7 to 11, 12 to 21, continuing at 22
+        - we run from (0,0) to 6
+            - we arrive at (x,y)
+            - we add legs
+                (x,y) 7 to 11 continuing 22 finishing 23
+                (x,y) 12 to 21 continuing 22 finishing 23
+
+
+
