@@ -1,7 +1,5 @@
-#include <iostream>
-#include <set>
 
-using namespace std;
+#include <stdio.h>
 
 int regs[] = {0, 0, 0, 0, 0, 0};
 
@@ -69,14 +67,7 @@ void eqrr(int a, int b, int c) {
   regs[c] = (regs[a] == regs[b]) ? 1 : 0;
 }
 
-bool comparator(const pair<int, long>& p1, const pair<int, long>& p2) {
-    return p1.second < p2.second;
-}
-
 int main() {
-  long counter = 0;
-  set<int> seen;
-  int last_r5 = -1;
   while (1) {
     switch(regs[2]) {
       case 0: seti(123, 0, 5); break;
@@ -107,23 +98,11 @@ int main() {
       case 25: seti(17, 6, 2); break;
       case 26: setr(4, 6, 1); break;
       case 27: seti(7, 5, 2); break;
-      case 28: eqrr(5, 0, 4); if (seen.find(regs[5]) != seen.end()) {
-                                cout << "Part2: " << last_r5 << endl;
-                                return 0;
-                              } else {
-                                last_r5 = regs[5];
-                                seen.insert(last_r5);
-                                break;
-                              }
+      case 28: eqrr(5, 0, 4); break;
       case 29: addr(4, 2, 2); break;
       case 30: seti(5, 4, 2); break;
-      default: cout << "Finished " << regs[0] << " " << counter<< endl; return 0;
+      default: printf("Execution: %d\n", regs[0]); return 0;
     }
-
-    if (counter % 1000000 == 0)
-        cout << "Counter: " << counter << " Seen size: " << seen.size() << endl;
-
     regs[2] += 1;
-    counter += 1;
   }
 }

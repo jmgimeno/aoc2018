@@ -1,4 +1,3 @@
-import os
 import string
 
 TEMPLATE = string.Template("""
@@ -104,12 +103,9 @@ def compile_file(fname, registers):
 
 
 def part1(fname):
-    name, _ = os.path.splitext(fname)
-    with open(name + '_part1.c', 'w') as compiled:
+    with open('day21.c', 'w') as compiled:
         program = compile_file(fname, [0, 0, 0, 0, 0, 0])
         compiled.write(program)
-
-
 
 
 if __name__ == "__main__":
