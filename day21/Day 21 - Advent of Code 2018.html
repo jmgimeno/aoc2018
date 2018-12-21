@@ -87,10 +87,10 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 
 -->
 <body>
-<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">36*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">0xffff&amp;</span><a href="/2018">2018</a><span class="title-event-wrap"></span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
+<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">40*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">y(</span><a href="/2018">2018</a><span class="title-event-wrap">)</span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
 
 <div id="sidebar">
-<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://rainway.io/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Rainway</a> - Play all your favorite PC games anytime, anywhere, across a variety of different devices.</div></div>
+<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://aoc.prodo.ai/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Alfie by Prodo</a> - a more immediate, feedback-driven coding experience. Try our online JavaScript playground with Advent of Code!</div></div>
 </div><!--/sidebar-->
 
 <main>
@@ -106,11 +106,15 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 <p>Because time travel is a dangerous activity, the activation system begins with a few instructions which verify that <em>bitwise AND</em> (via <code>bani</code>) does a <em>numeric</em> operation and <em>not</em> an operation as if the inputs were interpreted as strings. If the test fails, it enters an infinite loop re-running the test instead of allowing the program to execute normally.  If the test passes, the program continues, and assumes that <em>all other bitwise operations</em> (<code>banr</code>, <code>bori</code>, and <code>borr</code>) also interpret their inputs as <em>numbers</em>. (Clearly, the Elves who wrote this system were worried that someone might introduce a bug while trying to emulate this system with a scripting language.)</p>
 <p><em>What is the lowest non-negative integer value for register <code>0</code> that causes the program to halt after executing the fewest instructions?</em> (Executing the same instruction multiple times counts as multiple instructions executed.)</p>
 </article>
-<p>To begin, <a href="21/input" target="_blank">get your puzzle input</a>.</p>
-<form method="post" action="21/answer"><input type="hidden" name="level" value="1"/><p>Answer: <input type="text" name="answer" autocomplete="off"/> <input type="submit" value="[Submit]"/></p></form>
+<p>Your puzzle answer was <code>12935354</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>In order to determine the timing window for your underflow exploit, you also need an upper bound:</p>
+<p><em>What is the lowest non-negative integer value for register <code>0</code> that causes the program to halt after executing the most instructions?</em> (The program must actually halt; running forever does not count as halting.)</p>
+</article>
+<p>Your puzzle answer was <code>12390302</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2018">return to your advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="21/input" target="_blank">get your puzzle input</a>.</p>
 <p>You can also <span class="share">[Share<span class="share-content">on
-  <a href="https://twitter.com/intent/tweet?text=%22Chronal+Conversion%22+%2D+Day+21+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F21&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
-  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F21&amp;title=%22Chronal+Conversion%22+%2D+Day+21+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22Chronal+Conversion%22+%2D+Day+21+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F21&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F21&amp;title=I%27ve+completed+%22Chronal+Conversion%22+%2D+Day+21+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
 ></span>]</span> this puzzle.</p>
 </main>
 
