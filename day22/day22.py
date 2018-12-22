@@ -64,7 +64,9 @@ def test_risk_level():
 
 CLIMBING_GEAR, TORCH, NEITHER = range(3)
 COMPATIBILITY = {ROCKY: {CLIMBING_GEAR, TORCH}, WET: {CLIMBING_GEAR, NEITHER}, NARROW: {TORCH, NEITHER}}
-State = collections.namedtuple('State', 'heuristic distance region equipment')
+
+Node = collections.namedtuple('Node', 'fscore state')
+State = collections.namedtuple('State', 'region equipment')
 
 
 class Cave:
@@ -76,32 +78,56 @@ class Cave:
         return type_(region, self.depth, self.target)
 
     def explore(self):
-        visited = set()
-        states = []
-        heapq.heappush(states, State(heuristic=self.heuristic((0,0)), distance=0, region=(0, 0), equipment=TORCH))
-        while True:
-            state = heapq.heappop(states)
-            if (state.region, state.equipment) in visited:
-                continue
-            else:
-                visited.add((state.region, state.equipment))
-            if state.region == self.target and state.equipment == TORCH:
-                return state.distance
-            for adjacent in neighborhood(state.region):
-                new_heuristic = self.heuristic(adjacent)
-                for equipment in [CLIMBING_GEAR, TORCH, NEITHER]:
-                    if equipment in COMPATIBILITY[self.type_(adjacent)]:
-                        new_distance = (0 if equipment == state.equipment else 7) + 1 + state.distance
-                        heapq.heappush(states,
-                                       State(heuristic=new_distance + new_heuristic,
-                                             distance=new_distance,
-                                             region=adjacent,
-                                             equipment=equipment))
+        fscore = collections.defaultdict(lambda: float('inf'))
+        gscore = {}
+        start = State(region=(0, 0), equipment=TORCH)
 
-    def heuristic(self, region):
+        gscore[start] = 0
+        fscore[start] = self.heuristic(start)
+
+        open_states = {start}
+        closed_states = set()
+
+        while True:
+            current_state = min(open_states, key=lambda s: fscore[s])
+            open_states.remove(current_state)
+
+            if current_state.region == self.target and current_state.equipment == TORCH:
+                return gscore[current_state]
+
+            closed_states.add(current_state)
+
+            for next_state, distance in self.neighborhood(current_state):
+
+                if next_state in closed_states:
+                    continue
+
+                tentative_gscore = gscore[current_state] + distance
+
+                if next_state not in open_states:
+                    open_states.add(next_state)
+                elif tentative_gscore > gscore[next_state]:
+                    continue
+
+                gscore[next_state] = tentative_gscore
+                fscore[next_state] = tentative_gscore + self.heuristic(next_state)
+
+    def heuristic(self, state):
+        region = state.region
         return abs(self.target[0] - region[0]) + abs(self.target[1] - region[1])
 
-def neighborhood(region):
+    def neighborhood(self, current):
+        next_states_and_distances = []
+        for next_region in adjacent(current.region):
+            if current.equipment in COMPATIBILITY[self.type_(next_region)]:
+                next_states_and_distances.append((State(region=next_region, equipment=current.equipment), 1))
+        for equipment in [CLIMBING_GEAR, TORCH, NEITHER]:
+            if equipment != current.equipment and equipment in COMPATIBILITY[self.type_(current.region)]:
+                next_states_and_distances.append((State(region=current.region, equipment=equipment), 7))
+        return next_states_and_distances
+
+
+def adjacent(region):
     x, y = region
     moves = []
     if x > 0:
@@ -128,6 +154,9 @@ def test_explore():
     cave = Cave(510, (10, 10))
     assert cave.explore() == 45
 
+def _test_part2():
+    cave = Cave(8112, (13, 743))
+    assert cave.explore() == 1010
 
 if __name__ == '__main__':
     print("Part1: ", risk_level(8112, (13, 743)))
