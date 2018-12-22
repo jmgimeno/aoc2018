@@ -64,7 +64,7 @@ def test_risk_level():
 
 CLIMBING_GEAR, TORCH, NEITHER = range(3)
 COMPATIBILITY = {ROCKY: {CLIMBING_GEAR, TORCH}, WET: {CLIMBING_GEAR, NEITHER}, NARROW: {TORCH, NEITHER}}
-State = collections.namedtuple('State', 'distance region equipment')
+State = collections.namedtuple('State', 'heuristic distance region equipment')
 
 
 class Cave:
@@ -78,24 +78,28 @@ class Cave:
     def explore(self):
         visited = set()
         states = []
-        heapq.heappush(states, State(distance=0, region=(0, 0), equipment=TORCH))
+        heapq.heappush(states, State(heuristic=self.heuristic((0,0)), distance=0, region=(0, 0), equipment=TORCH))
         while True:
             state = heapq.heappop(states)
-            if state in visited:
+            if (state.region, state.equipment) in visited:
                 continue
             else:
-                visited.add(state)
+                visited.add((state.region, state.equipment))
             if state.region == self.target and state.equipment == TORCH:
                 return state.distance
             for adjacent in neighborhood(state.region):
-                if state.equipment in COMPATIBILITY[self.type_(adjacent)]:
-                    heapq.heappush(states,
-                                   State(distance=1 + state.distance, region=adjacent, equipment=state.equipment))
-            for other_equipment in [CLIMBING_GEAR, TORCH, NEITHER]:
-                if other_equipment != state.equipment:
-                    heapq.heappush(states,
-                                   State(distance=7 + state.distance, region=state.region, equipment=other_equipment))
+                new_heuristic = self.heuristic(adjacent)
+                for equipment in [CLIMBING_GEAR, TORCH, NEITHER]:
+                    if equipment in COMPATIBILITY[self.type_(adjacent)]:
+                        new_distance = (0 if equipment == state.equipment else 7) + 1 + state.distance
+                        heapq.heappush(states,
+                                       State(heuristic=new_distance + new_heuristic,
+                                             distance=new_distance,
+                                             region=adjacent,
+                                             equipment=equipment))
 
+    def heuristic(self, region):
+        return abs(self.target[0] - region[0]) + abs(self.target[1] - region[1])
 
 def neighborhood(region):
     x, y = region
