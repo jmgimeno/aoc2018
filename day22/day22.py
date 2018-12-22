@@ -1,6 +1,5 @@
 import collections
 import functools
-import heapq
 
 ROCKY, WET, NARROW = range(3)
 
@@ -154,9 +153,11 @@ def test_explore():
     cave = Cave(510, (10, 10))
     assert cave.explore() == 45
 
+
 def _test_part2():
     cave = Cave(8112, (13, 743))
     assert cave.explore() == 1010
+
 
 if __name__ == '__main__':
     print("Part1: ", risk_level(8112, (13, 743)))
