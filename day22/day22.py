@@ -62,9 +62,10 @@ def test_risk_level():
 # Part 2
 
 CLIMBING_GEAR, TORCH, NEITHER = range(3)
-COMPATIBILITY = {ROCKY: {CLIMBING_GEAR, TORCH}, WET: {CLIMBING_GEAR, NEITHER}, NARROW: {TORCH, NEITHER}}
+COMPATIBILITY = {ROCKY: {CLIMBING_GEAR, TORCH},
+                 WET: {CLIMBING_GEAR, NEITHER},
+                 NARROW: {TORCH, NEITHER}}
 
-Node = collections.namedtuple('Node', 'fscore state')
 State = collections.namedtuple('State', 'region equipment')
 
 
@@ -112,8 +113,8 @@ class Cave:
                 fscore[next_state] = tentative_gscore + self.heuristic(next_state)
 
     def heuristic(self, state):
-        region = state.region
-        return abs(self.target[0] - region[0]) + abs(self.target[1] - region[1])
+        return abs(self.target[0] - state.region[0]) \
+               + abs(self.target[1] - state.region[1])
 
     def neighborhood(self, current):
         next_states_and_distances = []
