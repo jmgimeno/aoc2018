@@ -24,6 +24,7 @@
       <sourceFolder url="file://$MODULE_DIR$/day20" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/day21" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/day22" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/day23" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Pipenv (aoc2018)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
