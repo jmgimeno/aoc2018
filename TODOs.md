@@ -45,6 +45,6 @@
   
 * day23
   * solve part2 as an optimization problem without using z3-solver
+  * create a graph of nanobots with edges if two nanobots intersect, find the max-clique in that graph with Born-Kerbosch
   
-
   
