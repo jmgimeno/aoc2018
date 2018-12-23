@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+z3-solver = "*"
 
 [dev-packages]
 pylint = "*"

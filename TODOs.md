@@ -43,5 +43,8 @@
 * day20
   * first parse regexp and then traverse it doing the exploration?
   
+* day23
+  * solve part2 as an optimization problem without using z3-solver
+  
 
   
