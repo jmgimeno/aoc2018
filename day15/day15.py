@@ -83,8 +83,7 @@ class Simulation:
             try:
                 self.round()
                 self.finished_rounds += 1
-                if self.finished_rounds % 10 == 0:
-                    print(self)
+                print("Finished ", self.finished_rounds)
             except EndOfSimulation:
                 finished = True
         return self.finished_rounds * self.sum_hit_points()
@@ -136,12 +135,12 @@ class Simulation:
                 if target.kind != unit.kind and target.is_alive]
 
     def find_in_range(self, targets):
-        return {pos
+        return [pos
                 for target in targets
-                for pos in self.adjacent_to(target.x, target.y)}
+                for pos in self.adjacent_to(target.x, target.y)]
 
     def find_reachable(self, begin, in_range):
-        return {end for end in in_range if self.is_reachable(begin, end)}
+        return [end for end in in_range if self.is_reachable(begin, end)]
 
     def is_reachable(self, begin, end, visited=None):
         if not visited:
@@ -154,14 +153,18 @@ class Simulation:
         return any(self.is_reachable(step, end, visited | {begin})
                    for step in next_positions)
 
+    @functools.lru_cache(maxsize=None)
+    def calc_distance(self, begin, end):
+        return self.distance(begin, end)
+
     def distance(self, begin, end, visited=None):
         if visited is None:
             visited = set()
         if begin == end:
             return 0
-        next_positions = {(x, y)
+        next_positions = [(x, y)
                           for (x, y) in self.adjacent_to(begin[0], begin[1])
-                          if (x, y) not in self.occupied_positions | visited}
+                          if (x, y) not in self.occupied_positions | visited]
         if len(next_positions) == 0:
             return float("+inf")
         return 1 + min(self.distance(step, end, visited | {begin})
@@ -193,6 +196,7 @@ class Simulation:
             self.cave[y][x] = self.cave[unit.y][unit.x]
             self.cave[unit.y][unit.x] = '.'
             unit.x, unit.y = x, y
+            self.calc_distance.cache_clear()
 
     def attack(self, unit, enemy):
         enemy.hit_points -= unit.attack_power
@@ -251,18 +255,18 @@ def test_find_targets(simulation):
 
 
 def test_find_in_range(simulation):
-    expected = {(3, 1), (5, 1), (2, 2), (5, 2), (1, 3), (3, 3)}
+    expected = [(3, 1), (5, 1), (2, 2), (5, 2), (1, 3), (3, 3)]
     unit = Unit(x=1, y=1, kind=Unit.ELF)
     targets = simulation.find_targets(unit)
-    assert simulation.find_in_range(targets) == expected
+    assert set(simulation.find_in_range(targets)) == set(expected)
 
 
 def test_find_reachable(simulation):
-    expected = {(3, 1), (2, 2), (1, 3), (3, 3)}
+    expected = [(3, 1), (2, 2), (1, 3), (3, 3)]
     unit = Unit(x=1, y=1, kind=Unit.ELF)
     targets = simulation.find_targets(unit)
     in_range = simulation.find_in_range(targets)
-    assert simulation.find_reachable((unit.x, unit.y), in_range) == expected
+    assert set(simulation.find_reachable((unit.x, unit.y), in_range)) == set(expected)
 
 
 def test_find_nearest(simulation):
