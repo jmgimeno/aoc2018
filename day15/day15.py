@@ -21,7 +21,7 @@ class Unit:
 
     def __repr__(self):
         kind = ['Elf', 'Goblin'][self.kind]
-        return "%s(x=%d, y=%d)" % (kind, self.x, self.y)
+        return "%s(x=%d, y=%d, hp=%d)" % (kind, self.x, self.y, self.hit_points)
 
 
 letter_to_kind = {'G': Unit.GOBLIN, 'E': Unit.ELF}
@@ -46,11 +46,16 @@ def parse_lines(lines):
     return cave, units
 
 
+class EndOfSimulation(Exception):
+    pass
+
+
 class Simulation:
 
     def __init__(self, lines):
         self.cave, self.units = parse_lines(lines)
-        self.occupied_positions = {(u.x, u.y) for u in self.units}
+        self.occupied_positions = {(u.x, u.y) for u in self.units if u.is_alive}
+        self.finished_rounds = 0
 
     def __repr__(self):
         repr_cave = []
@@ -71,11 +76,26 @@ class Simulation:
                 for (xx, yy) in [(x, y - 1), (x + 1, y), (x, y + 1), (x - 1, y)]
                 if self.cave[yy][xx] != '#']
 
+    def run(self, max_rounds=float('inf')):
+        finished = False
+        self.finished_rounds = 0
+        while not finished and self.finished_rounds < max_rounds:
+            try:
+                self.round()
+                self.finished_rounds += 1
+                if self.finished_rounds % 10 == 0:
+                    print(self)
+            except EndOfSimulation:
+                finished = True
+        return self.finished_rounds * self.sum_hit_points()
+
     def round(self):
-        sorted_units = sorted(self.units, key=lambda u: (u.y, u.x))
+        sorted_units = sorted((unit for unit in self.units if unit.is_alive),
+                              key=lambda u: (u.y, u.x))
         for unit in sorted_units:
             if unit.is_alive:
                 self.turn(unit)
+                self.occupied_positions = {(u.x, u.y) for u in self.units if u.is_alive}
 
     def turn(self, unit):
         if not self.enemy_in_range(unit):
@@ -84,22 +104,29 @@ class Simulation:
         if enemy:
             self.attack(unit, enemy)
 
-
     def enemy_in_range(self, unit):
         enemies = []
         for (x, y) in self.adjacent_to(unit.x, unit.y):
             c = self.cave[y][x]
-            if c != '.' and self.units[c].kind != unit.kind:
+            if c != '.' and self.units[c].kind != unit.kind and self.units[c].is_alive:
                 enemies.append(self.units[c])
-        return min(enemies, key=lambda u: (u.hit_points, u.y , u.x)) \
-                if len(enemies) > 0 else None
+        return min(enemies, key=lambda u: (u.hit_points, u.y, u.x)) \
+            if len(enemies) > 0 else None
 
     def next_pos(self, unit):
         unit_pos = unit.x, unit.y
         targets = self.find_targets(unit)
+        if len(targets) == 0:
+            raise EndOfSimulation()
         in_range = self.find_in_range(targets)
+        if len(in_range) == 0:
+            return
         reachable = self.find_reachable(unit_pos, in_range)
+        if len(reachable) == 0:
+            return
         nearest = self.find_nearest(unit_pos, reachable)
+        if len(nearest) == 0:
+            return
         chosen = self.find_chosen(nearest)
         return self.find_step(unit_pos, chosen)
 
@@ -160,10 +187,12 @@ class Simulation:
                    key=lambda xy: (self.distance(xy, chosen), xy[1], xy[0]))
 
     def move_to_range(self, unit):
-        x, y = self.next_pos(unit)
-        self.cave[y][x] = self.cave[unit.y][unit.y]
-        self.cave[unit.y][unit.x] = '.'
-        unit.x, unit.y = x, y
+        next_pos = self.next_pos(unit)
+        if next_pos is not None:
+            x, y = next_pos
+            self.cave[y][x] = self.cave[unit.y][unit.x]
+            self.cave[unit.y][unit.x] = '.'
+            unit.x, unit.y = x, y
 
     def attack(self, unit, enemy):
         enemy.hit_points -= unit.attack_power
@@ -171,14 +200,22 @@ class Simulation:
             enemy.is_alive = False
             self.cave[enemy.y][enemy.x] = '.'
 
+    def hit_points(self, x, y):
+        for unit in self.units:
+            if unit.x == x and unit.y == y and unit.is_alive:
+                return unit.hit_points
+
+    def sum_hit_points(self):
+        return sum(unit.hit_points for unit in self.units if unit.is_alive)
+
 
 @pytest.fixture
 def simulation():
-    lines = ["#######",
-             "#E..G.#",
-             "#...#.#",
-             "#.G.#G#",
-             "#######"]
+    lines = ['#######',
+             '#E..G.#',
+             '#...#.#',
+             '#.G.#G#',
+             '#######']
     return Simulation(lines)
 
 
@@ -228,7 +265,7 @@ def test_find_reachable(simulation):
     assert simulation.find_reachable((unit.x, unit.y), in_range) == expected
 
 
-def test_find_reachable(simulation):
+def test_find_nearest(simulation):
     expected = {(3, 1), (2, 2), (1, 3)}
     unit = Unit(x=1, y=1, kind=Unit.ELF)
     targets = simulation.find_targets(unit)
@@ -259,3 +296,214 @@ def test_find_step(simulation):
 def test_next_pos(simulation):
     unit = Unit(x=1, y=1, kind=Unit.ELF)
     assert simulation.next_pos(unit) == (2, 1)
+
+
+@pytest.fixture
+def simulation2():
+    lines = ['#######',
+             '#.G...#',
+             '#...EG#',
+             '#.#.#G#',
+             '#..G#E#',
+             '#.....#',
+             '#######']
+    return Simulation(lines)
+
+
+def test_simulation2(simulation2):
+    expected = '''\
+#######
+#.G...#
+#...EG#
+#.#.#G#
+#..G#E#
+#.....#
+#######'''
+    assert repr(simulation2) == expected
+
+
+def test_round1(simulation2):
+    expected = '''\
+#######
+#..G..#
+#...EG#
+#.#G#G#
+#...#E#
+#.....#
+#######'''
+
+    simulation2.run(1)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(3, 1) == 200
+    assert simulation2.hit_points(4, 2) == 197
+    assert simulation2.hit_points(5, 2) == 197
+    assert simulation2.hit_points(3, 3) == 200
+    assert simulation2.hit_points(5, 3) == 197
+    assert simulation2.hit_points(5, 4) == 197
+
+
+def test_round2(simulation2):
+    expected = '''\
+#######
+#...G.#
+#..GEG#
+#.#.#G#
+#...#E#
+#.....#
+#######'''
+
+    simulation2.run(2)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(4, 1) == 200
+    assert simulation2.hit_points(3, 2) == 200
+    assert simulation2.hit_points(4, 2) == 188
+    assert simulation2.hit_points(5, 3) == 194
+    assert simulation2.hit_points(5, 3) == 194
+    assert simulation2.hit_points(5, 4) == 194
+
+
+def test_round23(simulation2):
+    expected = '''\
+#######
+#...G.#
+#..G.G#
+#.#.#G#
+#...#E#
+#.....#
+#######'''
+
+    simulation2.run(23)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(4, 1) == 200
+    assert simulation2.hit_points(3, 2) == 200
+    assert simulation2.hit_points(5, 2) == 131
+    assert simulation2.hit_points(5, 3) == 131
+    assert simulation2.hit_points(5, 4) == 131
+
+
+def test_round24(simulation2):
+    expected = '''\
+#######
+#..G..#
+#...G.#
+#.#G#G#
+#...#E#
+#.....#
+#######'''
+
+    simulation2.run(24)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(3, 1) == 200
+    assert simulation2.hit_points(4, 2) == 131
+    assert simulation2.hit_points(3, 3) == 200
+    assert simulation2.hit_points(5, 3) == 128
+    assert simulation2.hit_points(5, 4) == 128
+
+
+def test_round25(simulation2):
+    expected = '''\
+#######
+#.G...#
+#..G..#
+#.#.#G#
+#..G#E#
+#.....#
+#######'''
+
+    simulation2.run(25)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(2, 1) == 200
+    assert simulation2.hit_points(3, 2) == 131
+    assert simulation2.hit_points(5, 3) == 125
+    assert simulation2.hit_points(3, 4) == 200
+    assert simulation2.hit_points(5, 4) == 125
+
+
+def test_round26(simulation2):
+    expected = '''\
+#######
+#G....#
+#.G...#
+#.#.#G#
+#...#E#
+#..G..#
+#######'''
+
+    simulation2.run(26)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(1, 1) == 200
+    assert simulation2.hit_points(2, 2) == 131
+    assert simulation2.hit_points(5, 3) == 122
+    assert simulation2.hit_points(5, 4) == 122
+    assert simulation2.hit_points(3, 5) == 200
+
+
+def test_round27(simulation2):
+    expected = '''\
+#######
+#G....#
+#.G...#
+#.#.#G#
+#...#E#
+#...G.#
+#######'''
+
+    simulation2.run(27)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(1, 1) == 200
+    assert simulation2.hit_points(2, 2) == 131
+    assert simulation2.hit_points(5, 3) == 119
+    assert simulation2.hit_points(5, 4) == 119
+    assert simulation2.hit_points(4, 5) == 200
+
+
+def test_round28(simulation2):
+    expected = '''\
+#######
+#G....#
+#.G...#
+#.#.#G#
+#...#E#
+#....G#
+#######'''
+
+    simulation2.run(28)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(1, 1) == 200
+    assert simulation2.hit_points(2, 2) == 131
+    assert simulation2.hit_points(5, 3) == 116
+    assert simulation2.hit_points(5, 4) == 113
+    assert simulation2.hit_points(5, 5) == 200
+
+
+def test_round47(simulation2):
+    expected = '''\
+#######
+#G....#
+#.G...#
+#.#.#G#
+#...#.#
+#....G#
+#######'''
+
+    simulation2.run(47)
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(1, 1) == 200
+    assert simulation2.hit_points(2, 2) == 131
+    assert simulation2.hit_points(5, 3) == 59
+    assert simulation2.hit_points(5, 5) == 200
+
+
+def test_run(simulation2):
+    assert simulation2.run() == 27730
+
+
+def part1(fname):
+    with open(fname, 'r') as file:
+        lines = [line.strip() for line in file]
+        simulation = Simulation(lines)
+        return simulation.run()
+
+
+if __name__ == '__main__':
+    print("Part1: ", part1('input.txt'))
