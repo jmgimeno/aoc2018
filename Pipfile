@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 numpy = "*"
 z3-solver = "*"
+scipy = "*"
 
 [dev-packages]
 pylint = "*"
