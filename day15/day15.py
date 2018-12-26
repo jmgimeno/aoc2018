@@ -94,14 +94,14 @@ class Simulation:
     def run(self, max_rounds=float('inf')):
         finished = False
         self.finished_rounds = 0
-        print('Initial cave')
-        print(self.show())
+        # print('Initial cave')
+        # print(self.show())
         while not finished and self.finished_rounds < max_rounds:
             try:
                 self.round()
                 self.finished_rounds += 1
-                print('\nFinished ', self.finished_rounds)
-                print(self.show())
+            #     print('\nFinished ', self.finished_rounds)
+            #     print(self.show())
             except EndOfSimulation:
                 finished = True
         return self.finished_rounds * self.sum_hit_points()
@@ -117,11 +117,9 @@ class Simulation:
             return
         enemy = self.enemy_in_range(unit)
         if not enemy:
-            print('Unit %s does not have enemies in range' % (unit,))
             self.move_to_range(unit)
         enemy = self.enemy_in_range(unit)
         if enemy:
-            print('Unit %s has enemy %s in range' % (unit, enemy))
             self.attack(unit, enemy)
 
     def enemy_in_range(self, unit):
@@ -141,12 +139,8 @@ class Simulation:
         if len(targets) == 0:
             raise EndOfSimulation()
         chosen = self.chosen(unit, targets)
-        print('Unit %s' % (unit,), end='')
-        if chosen is None:
-            print(' cannot get a target')
-        else:
+        if chosen is not None:
             x, y = self.next_pos(unit, chosen)
-            print(' targets %s and moves to %s' % (chosen, (x, y)))
             self.cave[y][x] = self.cave[unit.y][unit.x]
             self.cave[unit.y][unit.x] = '.'
             unit.x, unit.y = x, y
@@ -161,11 +155,11 @@ class Simulation:
         open_nodes = [(0, unit.y, unit.x)]
         while len(open_nodes) > 0:
             d, y, x = heapq.heappop(open_nodes)
+            if (x, y) in in_range:
+                return (x, y)
             for (xx, yy) in self.adjacent_to(x, y):
                 if self.cave[yy][xx] != '.':
                     continue
-                if (xx, yy) in in_range:
-                    return xx, yy
                 new_d = 1 + d
                 if new_d < distances[(xx, yy)]:
                     distances[(xx, yy)] = new_d
@@ -183,11 +177,11 @@ class Simulation:
         open_nodes = [(0, cy, cx)]
         while len(open_nodes) > 0:
             d, y, x = heapq.heappop(open_nodes)
+            if (x, y) in targets:
+                return x, y
             for (xx, yy) in self.adjacent_to(x, y):
                 if self.cave[yy][xx] != '.':
                     continue
-                if (xx, yy) in targets:
-                    return xx, yy
                 new_d = 1 + d
                 if new_d < distances[(xx, yy)]:
                     distances[(xx, yy)] = new_d
@@ -198,7 +192,6 @@ class Simulation:
         if enemy.hit_points <= 0:
             enemy.is_alive = False
             self.cave[enemy.y][enemy.x] = '.'
-        print('Unit %s has attacked % s' %(unit, enemy))
 
     def hit_points(self, x, y):
         for unit in self.units:
