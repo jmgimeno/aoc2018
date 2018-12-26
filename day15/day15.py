@@ -110,14 +110,18 @@ class Simulation:
         sorted_units = sorted((unit for unit in self.units if unit.is_alive),
                               key=lambda u: (u.y, u.x))
         for unit in sorted_units:
-            if unit.is_alive:
-                self.turn(unit)
+            self.turn(unit)
 
     def turn(self, unit):
-        if not self.enemy_in_range(unit):
+        if not unit.is_alive:
+            return
+        enemy = self.enemy_in_range(unit)
+        if not enemy:
+            print('Unit %s does not have enemies in range' % (unit,))
             self.move_to_range(unit)
         enemy = self.enemy_in_range(unit)
         if enemy:
+            print('Unit %s has enemy %s in range' % (unit, enemy))
             self.attack(unit, enemy)
 
     def enemy_in_range(self, unit):
@@ -194,7 +198,7 @@ class Simulation:
         if enemy.hit_points <= 0:
             enemy.is_alive = False
             self.cave[enemy.y][enemy.x] = '.'
-        print('%s has attacked % s' %(unit, enemy))
+        print('Unit %s has attacked % s' %(unit, enemy))
 
     def hit_points(self, x, y):
         for unit in self.units:
