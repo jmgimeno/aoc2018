@@ -28,13 +28,10 @@
   * improve the C++ solution to a more idiomatic code
 
 * day15:
-  * change representation of problem to one similar to the diagrans
-    * Unit(x,y,type_,hit_points)
-    * array of units
-    * matrix of characters: # wall . space n índex of unit
+  * lot of refactoring is needed 
 
 * day17
-  * lots of refactoring are needed
+  * lot of refactoring is needed
   
 * day19
   * implement a real factorization algorithm
