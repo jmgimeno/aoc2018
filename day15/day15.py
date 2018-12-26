@@ -1,5 +1,6 @@
+import collections
 import functools
-
+import heapq
 import pytest
 
 
@@ -54,7 +55,6 @@ class Simulation:
 
     def __init__(self, lines):
         self.cave, self.units = parse_lines(lines)
-        self.occupied_positions = {(u.x, u.y) for u in self.units if u.is_alive}
         self.finished_rounds = 0
 
     def __repr__(self):
@@ -69,6 +69,21 @@ class Simulation:
             repr_cave.append(''.join(repr_row))
         return '\n'.join(repr_cave)
 
+    def show(self):
+        cave = []
+        for row in self.cave:
+            repr_row = []
+            units_row = []
+            for c in row:
+                if c in ('#', '.'):
+                    repr_row.append(c)
+                else:
+                    unit = self.units[c]
+                    repr_row.append(kind_to_letter[unit.kind])
+                    units_row.append('%s(%d)' % (kind_to_letter[unit.kind], unit.hit_points))
+            cave.append('%s   %s' % (''.join(repr_row), ', '.join(units_row)))
+        return '\n'.join(cave)
+
     @functools.lru_cache(maxsize=None)
     def adjacent_to(self, x, y):
         assert self.cave[y][x] != '#'
@@ -79,11 +94,14 @@ class Simulation:
     def run(self, max_rounds=float('inf')):
         finished = False
         self.finished_rounds = 0
+        print('Initial cave')
+        print(self.show())
         while not finished and self.finished_rounds < max_rounds:
             try:
                 self.round()
                 self.finished_rounds += 1
-                print("Finished ", self.finished_rounds)
+                print('\nFinished ', self.finished_rounds)
+                print(self.show())
             except EndOfSimulation:
                 finished = True
         return self.finished_rounds * self.sum_hit_points()
@@ -94,7 +112,6 @@ class Simulation:
         for unit in sorted_units:
             if unit.is_alive:
                 self.turn(unit)
-                self.occupied_positions = {(u.x, u.y) for u in self.units if u.is_alive}
 
     def turn(self, unit):
         if not self.enemy_in_range(unit):
@@ -112,97 +129,72 @@ class Simulation:
         return min(enemies, key=lambda u: (u.hit_points, u.y, u.x)) \
             if len(enemies) > 0 else None
 
-    def next_pos(self, unit):
-        unit_pos = unit.x, unit.y
-        targets = self.find_targets(unit)
+    def move_to_range(self, unit):
+        targets = [(target.x, target.y)
+                   for target in self.units
+                   if target.kind != unit.kind
+                   and target.is_alive]
         if len(targets) == 0:
             raise EndOfSimulation()
-        in_range = self.find_in_range(targets)
-        if len(in_range) == 0:
-            return
-        reachable = self.find_reachable(unit_pos, in_range)
-        if len(reachable) == 0:
-            return
-        nearest = self.find_nearest(unit_pos, reachable)
-        if len(nearest) == 0:
-            return
-        chosen = self.find_chosen(nearest)
-        return self.find_step(unit_pos, chosen)
-
-    def find_targets(self, unit):
-        return [target
-                for target in self.units
-                if target.kind != unit.kind and target.is_alive]
-
-    def find_in_range(self, targets):
-        return [pos
-                for target in targets
-                for pos in self.adjacent_to(target.x, target.y)]
-
-    def find_reachable(self, begin, in_range):
-        return [end for end in in_range if self.is_reachable(begin, end)]
-
-    def is_reachable(self, begin, end, visited=None):
-        if not visited:
-            visited = set()
-        if begin == end:
-            return True
-        next_positions = ((x, y)
-                          for (x, y) in self.adjacent_to(begin[0], begin[1])
-                          if (x, y) not in self.occupied_positions | visited)
-        return any(self.is_reachable(step, end, visited | {begin})
-                   for step in next_positions)
-
-    @functools.lru_cache(maxsize=None)
-    def calc_distance(self, begin, end):
-        return self.distance(begin, end)
-
-    def distance(self, begin, end, visited=None):
-        if visited is None:
-            visited = set()
-        if begin == end:
-            return 0
-        next_positions = [(x, y)
-                          for (x, y) in self.adjacent_to(begin[0], begin[1])
-                          if (x, y) not in self.occupied_positions | visited]
-        if len(next_positions) == 0:
-            return float("+inf")
-        return 1 + min(self.distance(step, end, visited | {begin})
-                       for step in next_positions)
-
-    def find_nearest(self, begin, reachable):
-        nearest = set()
-        min_distance = float("+inf")
-        for end in reachable:
-            d = self.distance(begin, end)
-            if d < min_distance:
-                nearest = {end}
-                min_distance = d
-            elif d == min_distance:
-                nearest.add(end)
-        return nearest
-
-    def find_chosen(self, nearest):
-        return min(nearest, key=lambda p: (p[1], p[0]))
-
-    def find_step(self, begin, chosen):
-        return min((neighbour for neighbour in self.adjacent_to(begin[0], begin[1])),
-                   key=lambda xy: (self.distance(xy, chosen), xy[1], xy[0]))
-
-    def move_to_range(self, unit):
-        next_pos = self.next_pos(unit)
-        if next_pos is not None:
-            x, y = next_pos
+        chosen = self.chosen(unit, targets)
+        print('Unit %s' % (unit,), end='')
+        if chosen is None:
+            print(' cannot get a target')
+        else:
+            x, y = self.next_pos(unit, chosen)
+            print(' targets %s and moves to %s' % (chosen, (x, y)))
             self.cave[y][x] = self.cave[unit.y][unit.x]
             self.cave[unit.y][unit.x] = '.'
             unit.x, unit.y = x, y
-            self.calc_distance.cache_clear()
+
+    def chosen(self, unit, targets):
+        in_range = {(x, y)
+                    for (tx, ty) in targets
+                    for (x, y) in self.adjacent_to(tx, ty)
+                    if self.cave[y][x] == '.'}
+        distances = collections.defaultdict(lambda: float('inf'))
+        distances[(unit.x, unit.y)] = 0
+        open_nodes = [(0, unit.y, unit.x)]
+        while len(open_nodes) > 0:
+            d, y, x = heapq.heappop(open_nodes)
+            for (xx, yy) in self.adjacent_to(x, y):
+                if self.cave[yy][xx] != '.':
+                    continue
+                if (xx, yy) in in_range:
+                    return xx, yy
+                new_d = 1 + d
+                if new_d < distances[(xx, yy)]:
+                    distances[(xx, yy)] = new_d
+                    heapq.heappush(open_nodes, (distances[(xx, yy)], yy, xx))
+
+    def next_pos(self, unit, chosen):
+        cx, cy = chosen
+        targets = {(x, y)
+                   for (x, y) in self.adjacent_to(unit.x, unit.y)
+                   if self.cave[y][x] == '.'}
+        if chosen in targets:
+            return chosen
+        distances = collections.defaultdict(lambda: float('inf'))
+        distances[(cx, cy)] = 0
+        open_nodes = [(0, cy, cx)]
+        while len(open_nodes) > 0:
+            d, y, x = heapq.heappop(open_nodes)
+            for (xx, yy) in self.adjacent_to(x, y):
+                if self.cave[yy][xx] != '.':
+                    continue
+                if (xx, yy) in targets:
+                    return xx, yy
+                new_d = 1 + d
+                if new_d < distances[(xx, yy)]:
+                    distances[(xx, yy)] = new_d
+                    heapq.heappush(open_nodes, (distances[(xx, yy)], yy, xx))
 
     def attack(self, unit, enemy):
         enemy.hit_points -= unit.attack_power
         if enemy.hit_points <= 0:
             enemy.is_alive = False
             self.cave[enemy.y][enemy.x] = '.'
+        print('%s has attacked % s' %(unit, enemy))
 
     def hit_points(self, x, y):
         for unit in self.units:
@@ -247,59 +239,23 @@ def test_repr(simulation):
     assert repr(simulation) == expected
 
 
-def test_find_targets(simulation):
-    expected = [Unit(x=4, y=1, kind=Unit.GOBLIN),
-                Unit(x=2, y=3, kind=Unit.GOBLIN),
-                Unit(x=5, y=3, kind=Unit.GOBLIN)]
-    assert simulation.find_targets(Unit(x=1, y=1, kind=Unit.ELF)) == expected
-
-
-def test_find_in_range(simulation):
-    expected = [(3, 1), (5, 1), (2, 2), (5, 2), (1, 3), (3, 3)]
+def test_chosen(simulation):
     unit = Unit(x=1, y=1, kind=Unit.ELF)
-    targets = simulation.find_targets(unit)
-    assert set(simulation.find_in_range(targets)) == set(expected)
-
-
-def test_find_reachable(simulation):
-    expected = [(3, 1), (2, 2), (1, 3), (3, 3)]
-    unit = Unit(x=1, y=1, kind=Unit.ELF)
-    targets = simulation.find_targets(unit)
-    in_range = simulation.find_in_range(targets)
-    assert set(simulation.find_reachable((unit.x, unit.y), in_range)) == set(expected)
-
-
-def test_find_nearest(simulation):
-    expected = {(3, 1), (2, 2), (1, 3)}
-    unit = Unit(x=1, y=1, kind=Unit.ELF)
-    targets = simulation.find_targets(unit)
-    in_range = simulation.find_in_range(targets)
-    reachable = simulation.find_reachable((unit.x, unit.y), in_range)
-    assert simulation.find_nearest((unit.x, unit.y), reachable) == expected
-
-
-def test_find_chosen(simulation):
-    unit = Unit(x=1, y=1, kind=Unit.ELF)
-    targets = simulation.find_targets(unit)
-    in_range = simulation.find_in_range(targets)
-    reachable = simulation.find_reachable((unit.x, unit.y), in_range)
-    nearest = simulation.find_nearest((unit.x, unit.y), reachable)
-    assert simulation.find_chosen(nearest) == (3, 1)
-
-
-def test_find_step(simulation):
-    unit = Unit(x=1, y=1, kind=Unit.ELF)
-    targets = simulation.find_targets(unit)
-    in_range = simulation.find_in_range(targets)
-    reachable = simulation.find_reachable((unit.x, unit.y), in_range)
-    nearest = simulation.find_nearest((unit.x, unit.y), reachable)
-    chosen = simulation.find_chosen(nearest)
-    assert simulation.find_step((unit.x, unit.y), chosen) == (2, 1)
+    targets = [(target.x, target.y)
+               for target in simulation.units
+               if target.kind != unit.kind
+               and target.is_alive]
+    assert simulation.chosen(unit, targets) == (3, 1)
 
 
 def test_next_pos(simulation):
     unit = Unit(x=1, y=1, kind=Unit.ELF)
-    assert simulation.next_pos(unit) == (2, 1)
+    targets = [(target.x, target.y)
+               for target in simulation.units
+               if target.kind != unit.kind
+               and target.is_alive]
+    chosen = simulation.chosen(unit, targets)
+    assert simulation.next_pos(unit, chosen) == (2, 1)
 
 
 @pytest.fixture
@@ -502,12 +458,203 @@ def test_run(simulation2):
     assert simulation2.run() == 27730
 
 
+def test_run2(simulation2):
+    expected = '''\
+#######
+#G....#
+#.G...#
+#.#.#G#
+#...#.#
+#....G#
+#######'''
+
+    assert simulation2.run() == 27730
+    assert simulation2.finished_rounds == 47
+    assert simulation2.sum_hit_points() == 590
+    assert repr(simulation2) == expected
+    assert simulation2.hit_points(1, 1) == 200
+    assert simulation2.hit_points(2, 2) == 131
+    assert simulation2.hit_points(5, 3) == 59
+    assert simulation2.hit_points(5, 5) == 200
+
+
+@pytest.fixture
+def simulation3():
+    lines = ['#######',
+             '#G..#E#',
+             '#E#E.E#',
+             '#G.##.#',
+             '#...#E#',
+             '#...E.#',
+             '#######']
+    return Simulation(lines)
+
+
+def test_run3(simulation3):
+    expected = '''\
+#######
+#...#E#
+#E#...#
+#.E##.#
+#E..#E#
+#.....#
+#######'''
+
+    assert simulation3.run() == 36334
+    assert simulation3.finished_rounds == 37
+    assert simulation3.sum_hit_points() == 982
+    assert repr(simulation3) == expected
+    assert simulation3.hit_points(5, 1) == 200
+    assert simulation3.hit_points(1, 2) == 197
+    assert simulation3.hit_points(2, 3) == 185
+    assert simulation3.hit_points(1, 4) == 200
+    assert simulation3.hit_points(5, 4) == 200
+
+
+@pytest.fixture
+def simulation4():
+    lines = ['#######',
+             '#E..EG#',
+             '#.#G.E#',
+             '#E.##E#',
+             '#G..#.#',
+             '#..E#.#',
+             '#######']
+    return Simulation(lines)
+
+
+def test_run4(simulation4):
+    expected = '''\
+#######
+#.E.E.#
+#.#E..#
+#E.##.#
+#.E.#.#
+#...#.#
+#######'''
+
+    assert simulation4.run() == 39514
+    assert simulation4.finished_rounds == 46
+    assert simulation4.sum_hit_points() == 859
+    assert repr(simulation4) == expected
+    assert simulation4.hit_points(2, 1) == 164
+    assert simulation4.hit_points(4, 1) == 197
+    assert simulation4.hit_points(3, 2) == 200
+    assert simulation4.hit_points(1, 3) == 98
+    assert simulation4.hit_points(2, 4) == 200
+
+
+@pytest.fixture
+def simulation5():
+    lines = ['#######',
+             '#E.G#.#',
+             '#.#G..#',
+             '#G.#.G#',
+             '#G..#.#',
+             '#...E.#',
+             '#######']
+    return Simulation(lines)
+
+
+def test_run5(simulation5):
+    expected = '''\
+#######
+#G.G#.#
+#.#G..#
+#..#..#
+#...#G#
+#...G.#
+#######'''
+
+    assert simulation5.run() == 27755
+    assert simulation5.finished_rounds == 35
+    assert simulation5.sum_hit_points() == 793
+    assert repr(simulation5) == expected
+    assert simulation5.hit_points(1, 1) == 200
+    assert simulation5.hit_points(3, 1) == 98
+    assert simulation5.hit_points(3, 2) == 200
+    assert simulation5.hit_points(5, 4) == 95
+    assert simulation5.hit_points(4, 5) == 200
+
+
+@pytest.fixture
+def simulation6():
+    lines = ['#######',
+             '#.E...#',
+             '#.#..G#',
+             '#.###.#',
+             '#E#G#G#',
+             '#...#G#',
+             '#######']
+    return Simulation(lines)
+
+
+def test_run6(simulation6):
+    expected = '''\
+#######
+#.....#
+#.#G..#
+#.###.#
+#.#.#.#
+#G.G#G#
+#######'''
+
+    assert simulation6.run() == 28944
+    assert simulation6.finished_rounds == 54
+    assert simulation6.sum_hit_points() == 536
+    assert repr(simulation6) == expected
+    assert simulation6.hit_points(3, 2) == 200
+    assert simulation6.hit_points(1, 5) == 98
+    assert simulation6.hit_points(3, 5) == 38
+    assert simulation6.hit_points(5, 5) == 200
+
+
+@pytest.fixture
+def simulation7():
+    lines = ['#########',
+             '#G......#',
+             '#.E.#...#',
+             '#..##..G#',
+             '#...##..#',
+             '#...#...#',
+             '#.G...G.#',
+             '#.....G.#',
+             '#########']
+    return Simulation(lines)
+
+
+def test_run7(simulation7):
+    expected = '''\
+#########
+#.G.....#
+#G.G#...#
+#.G##...#
+#...##..#
+#.G.#...#
+#.......#
+#.......#
+#########'''
+
+    assert simulation7.run() == 18740
+    assert simulation7.finished_rounds == 20
+    assert simulation7.sum_hit_points() == 937
+    assert repr(simulation7) == expected
+    assert simulation7.hit_points(2, 1) == 137
+    assert simulation7.hit_points(1, 2) == 200
+    assert simulation7.hit_points(3, 2) == 200
+    assert simulation7.hit_points(2, 3) == 200
+    assert simulation7.hit_points(2, 5) == 200
+
+
 def part1(fname):
     with open(fname, 'r') as file:
         lines = [line.strip() for line in file]
         simulation = Simulation(lines)
-        return simulation.run()
-
+        result = simulation.run()
+        print("Finished rounds", simulation.finished_rounds)
+        print("Sum of points", simulation.sum_hit_points())
+        return result
 
 if __name__ == '__main__':
+
     print("Part1: ", part1('input.txt'))
