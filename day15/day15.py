@@ -106,6 +106,23 @@ class Simulation:
                 finished = True
         return self.finished_rounds * self.sum_hit_points()
 
+    def run2(self, max_rounds=float('inf')):
+        finished = False
+        self.finished_rounds = 0
+        # print('Initial cave')
+        # print(self.show())
+        while not finished and self.finished_rounds < max_rounds:
+            try:
+                self.round()
+                if any(unit for unit in self.units if unit.kind == Unit.ELF and not unit.is_alive):
+                    raise ElfKilled()
+                self.finished_rounds += 1
+            #     print('\nFinished ', self.finished_rounds)
+            #     print(self.show())
+            except EndOfSimulation:
+                finished = True
+        return self.finished_rounds * self.sum_hit_points()
+
     def round(self):
         sorted_units = sorted((unit for unit in self.units if unit.is_alive),
                               key=lambda u: (u.y, u.x))
@@ -200,6 +217,11 @@ class Simulation:
 
     def sum_hit_points(self):
         return sum(unit.hit_points for unit in self.units if unit.is_alive)
+
+    def set_elf_attack_power(self, attack_power):
+        for unit in self.units:
+            if unit.kind == Unit.ELF:
+                unit.attack_power = attack_power
 
 
 @pytest.fixture
@@ -648,10 +670,44 @@ def part1(fname):
         lines = [line.strip() for line in file]
         simulation = Simulation(lines)
         result = simulation.run()
-        print("Finished rounds", simulation.finished_rounds)
-        print("Sum of points", simulation.sum_hit_points())
         return result
 
-if __name__ == '__main__':
 
+class ElfKilled(Exception):
+    pass
+
+
+def optimize(lines):
+    elf_attack_power = 4
+    elf_survives = False
+    while not elf_survives:
+        try:
+            simulation = Simulation(lines)
+            simulation.set_elf_attack_power(elf_attack_power)
+            result = simulation.run2()
+            elf_survives = True
+            return result
+        except ElfKilled:
+            elf_attack_power += 1
+
+
+def part2(fname):
+    with open(fname, 'r') as file:
+        lines = [line.strip() for line in file]
+        return optimize(lines)
+
+
+def test_optimize():
+    lines = ['#######',
+             '#.G...#',
+             '#...EG#',
+             '#.#.#G#',
+             '#..G#E#',
+             '#.....#',
+             '#######']
+    assert optimize(lines) == 4988
+
+
+if __name__ == '__main__':
     print("Part1: ", part1('input.txt'))
+    print("Part2: ", part2('input.txt'))
