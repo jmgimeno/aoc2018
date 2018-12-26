@@ -187,8 +187,6 @@ class Simulation:
         targets = {(x, y)
                    for (x, y) in self.adjacent_to(unit.x, unit.y)
                    if self.cave[y][x] == '.'}
-        if chosen in targets:
-            return chosen
         distances = collections.defaultdict(lambda: float('inf'))
         distances[(cx, cy)] = 0
         open_nodes = [(0, cy, cx)]
