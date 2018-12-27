@@ -87,10 +87,10 @@ If you'd like to hang out, I'm @ericwastl on Twitter.
 
 -->
 <body>
-<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">44*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="title-event-wrap"></span><a href="/2018">2018</a><span class="title-event-wrap"></span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
+<header><div><h1 class="title-global"><a href="/">Advent of Code</a></h1><nav><ul><li><a href="/2018/about">[About]</a></li><li><a href="/2018/events">[Events]</a></li><li><a href="https://teespring.com/adventofcode" target="_blank">[Shop]</a></li><li><a href="/2018/settings">[Settings]</a></li><li><a href="/2018/auth/logout">[Log Out]</a></li></ul></nav><div class="user">jmgimeno <span class="star-count">49*</span></div></div><div><h1 class="title-event">&nbsp;&nbsp;&nbsp;<span class="title-event-wrap">0xffff&amp;</span><a href="/2018">2018</a><span class="title-event-wrap"></span></h1><nav><ul><li><a href="/2018">[Calendar]</a></li><li><a href="/2018/support">[AoC++]</a></li><li><a href="/2018/sponsors">[Sponsors]</a></li><li><a href="/2018/leaderboard">[Leaderboard]</a></li><li><a href="/2018/stats">[Stats]</a></li></ul></nav></div></header>
 
 <div id="sidebar">
-<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://www.honeypot.io/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Honeypot.io</a> - Europe's Tech Job Platform where companies apply to you with salary and tech stack upfront!</div></div>
+<div id="sponsor"><div class="quiet">Our <a href="/2018/sponsors">sponsors</a> help make Advent of Code possible:</div><div class="sponsor"><a href="https://aoc.prodo.ai/" target="_blank" onclick="if(ga)ga('send','event','sponsor','click',this.href);" rel="noopener">Alfie by Prodo</a> - a more immediate, feedback-driven coding experience. Try our online JavaScript playground with Advent of Code!</div></div>
 </div><!--/sidebar-->
 
 <main>
@@ -243,11 +243,147 @@ Group 2 contains 4434 units
 <p>In the example above, the winning army ends up with <code>782 + 4434 = <em>5216</em></code> units.</p>
 <p>You scan the reindeer's condition (your puzzle input); the white-bearded man looks nervous.  As it stands now, <em>how many units would the winning army have</em>?</p>
 </article>
-<p>To begin, <a href="24/input" target="_blank">get your puzzle input</a>.</p>
-<form method="post" action="24/answer"><input type="hidden" name="level" value="1"/><p>Answer: <input type="text" name="answer" autocomplete="off"/> <input type="submit" value="[Submit]"/></p></form>
+<p>Your puzzle answer was <code>15392</code>.</p><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Things aren't looking good for the reindeer. The man asks whether more milk and cookies would help you think.</p>
+<p>If only you could give the reindeer's immune system a boost, you might be able to change the outcome of the combat.</p>
+<p>A <em>boost</em> is an integer increase in immune system units' attack damage. For example, if you were to boost the above example's immune system's units by <code>1570</code>, the armies would instead look like this:</p>
+<pre><code>Immune System:
+17 units each with 5390 hit points (weak to radiation, bludgeoning) with
+ an attack that does <em>6077</em> fire damage at initiative 2
+989 units each with 1274 hit points (immune to fire; weak to bludgeoning,
+ slashing) with an attack that does <em>1595</em> slashing damage at initiative 3
+
+Infection:
+801 units each with 4706 hit points (weak to radiation) with an attack
+ that does 116 bludgeoning damage at initiative 1
+4485 units each with 2961 hit points (immune to radiation; weak to fire,
+ cold) with an attack that does 12 slashing damage at initiative 4
+</code></pre>
+<p>With this boost, the combat proceeds differently:</p>
+<pre><code>Immune System:
+Group 2 contains 989 units
+Group 1 contains 17 units
+Infection:
+Group 1 contains 801 units
+Group 2 contains 4485 units
+
+Infection group 1 would deal defending group 2 185832 damage
+Infection group 1 would deal defending group 1 185832 damage
+Infection group 2 would deal defending group 1 53820 damage
+Immune System group 2 would deal defending group 1 1577455 damage
+Immune System group 2 would deal defending group 2 1577455 damage
+Immune System group 1 would deal defending group 2 206618 damage
+
+Infection group 2 attacks defending group 1, killing 9 units
+Immune System group 2 attacks defending group 1, killing 335 units
+Immune System group 1 attacks defending group 2, killing 32 units
+Infection group 1 attacks defending group 2, killing 84 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 905 units
+Group 1 contains 8 units
+Infection:
+Group 1 contains 466 units
+Group 2 contains 4453 units
+
+Infection group 1 would deal defending group 2 108112 damage
+Infection group 1 would deal defending group 1 108112 damage
+Infection group 2 would deal defending group 1 53436 damage
+Immune System group 2 would deal defending group 1 1443475 damage
+Immune System group 2 would deal defending group 2 1443475 damage
+Immune System group 1 would deal defending group 2 97232 damage
+
+Infection group 2 attacks defending group 1, killing 8 units
+Immune System group 2 attacks defending group 1, killing 306 units
+Infection group 1 attacks defending group 2, killing 29 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 876 units
+Infection:
+Group 2 contains 4453 units
+Group 1 contains 160 units
+
+Infection group 2 would deal defending group 2 106872 damage
+Immune System group 2 would deal defending group 2 1397220 damage
+Immune System group 2 would deal defending group 1 1397220 damage
+
+Infection group 2 attacks defending group 2, killing 83 units
+Immune System group 2 attacks defending group 2, killing 427 units
+</code></pre>
+<p>After a few fights...</p>
+<pre><code>Immune System:
+Group 2 contains 64 units
+Infection:
+Group 2 contains 214 units
+Group 1 contains 19 units
+
+Infection group 2 would deal defending group 2 5136 damage
+Immune System group 2 would deal defending group 2 102080 damage
+Immune System group 2 would deal defending group 1 102080 damage
+
+Infection group 2 attacks defending group 2, killing 4 units
+Immune System group 2 attacks defending group 2, killing 32 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 60 units
+Infection:
+Group 1 contains 19 units
+Group 2 contains 182 units
+
+Infection group 1 would deal defending group 2 4408 damage
+Immune System group 2 would deal defending group 1 95700 damage
+Immune System group 2 would deal defending group 2 95700 damage
+
+Immune System group 2 attacks defending group 1, killing 19 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 60 units
+Infection:
+Group 2 contains 182 units
+
+Infection group 2 would deal defending group 2 4368 damage
+Immune System group 2 would deal defending group 2 95700 damage
+
+Infection group 2 attacks defending group 2, killing 3 units
+Immune System group 2 attacks defending group 2, killing 30 units
+</code></pre>
+<p>After a few more fights...</p>
+<pre><code>Immune System:
+Group 2 contains 51 units
+Infection:
+Group 2 contains 40 units
+
+Infection group 2 would deal defending group 2 960 damage
+Immune System group 2 would deal defending group 2 81345 damage
+
+Infection group 2 attacks defending group 2, killing 0 units
+Immune System group 2 attacks defending group 2, killing 27 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 51 units
+Infection:
+Group 2 contains 13 units
+
+Infection group 2 would deal defending group 2 312 damage
+Immune System group 2 would deal defending group 2 81345 damage
+
+Infection group 2 attacks defending group 2, killing 0 units
+Immune System group 2 attacks defending group 2, killing 13 units
+</code></pre>
+<pre><code>Immune System:
+Group 2 contains 51 units
+Infection:
+No groups remain.
+</code></pre>
+<p>This boost would allow the immune system's armies to win! It would be left with <code><em>51</em></code> units.</p>
+<p>You don't even know <em>how</em> you could boost the reindeer's immune system or what effect it might have, so you need to be cautious and find the <em>smallest boost</em> that would allow the immune system to win.</p>
+<p><em>How many units does the immune system have left</em> after getting the smallest boost it needs to win?</p>
+</article>
+<p>Your puzzle answer was <code>1092</code>.</p><p class="day-success">Both parts of this puzzle are complete! They provide two gold stars: **</p>
+<p>At this point, you should <a href="/2018">return to your advent calendar</a> and try another puzzle.</p>
+<p>If you still want to see it, you can <a href="24/input" target="_blank">get your puzzle input</a>.</p>
 <p>You can also <span class="share">[Share<span class="share-content">on
-  <a href="https://twitter.com/intent/tweet?text=%22Immune+System+Simulator+20XX%22+%2D+Day+24+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F24&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
-  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F24&amp;title=%22Immune+System+Simulator+20XX%22+%2D+Day+24+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
+  <a href="https://twitter.com/intent/tweet?text=I%27ve+completed+%22Immune+System+Simulator+20XX%22+%2D+Day+24+%2D+Advent+of+Code+2018&amp;url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F24&amp;related=ericwastl&amp;hashtags=AdventOfCode" target="_blank">Twitter</a>
+  <a href="http://www.reddit.com/submit?url=https%3A%2F%2Fadventofcode%2Ecom%2F2018%2Fday%2F24&amp;title=I%27ve+completed+%22Immune+System+Simulator+20XX%22+%2D+Day+24+%2D+Advent+of+Code+2018" target="_blank">Reddit</a
 ></span>]</span> this puzzle.</p>
 </main>
 
