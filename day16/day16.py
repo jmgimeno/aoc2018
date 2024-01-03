@@ -142,7 +142,7 @@ class Parser():
 
 
 def part1(fname):
-    samples, _ = Parser('input.txt').parse()
+    samples, _ = Parser('../data/day16-input.txt').parse()
     return sum(1 for sample in samples if len(compatible_ops(sample)) >= 3)
 
 
@@ -177,7 +177,7 @@ def run(program, assignments):
 
 
 def part2(fname):
-    samples, program = Parser('input.txt').parse()
+    samples, program = Parser('../data/day16-input.txt').parse()
     ct = compatibility_table(samples)
     assignments, remaining = propagate(ct)
     assert len(remaining) == 0
@@ -186,5 +186,5 @@ def part2(fname):
 
 
 if __name__ == '__main__':
-    print('Part1:', part1('input.txt'))
-    print('Part2:', part2('input.txt'))
+    print('Part1:', part1('../data/day16-input.txt'))
+    print('Part2:', part2('../data/day16-input.txt'))

@@ -114,7 +114,7 @@ def test_part1():
 
 
 if __name__ == '__main__':
-    with open('input.txt', 'r') as file:
+    with open('../data/day20-input.txt', 'r') as file:
         contents = file.read().strip()
         print("Part1: ", part1(contents))
         print("Part2: ", part2(contents))

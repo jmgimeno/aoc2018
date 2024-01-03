@@ -294,5 +294,5 @@ def test_part2():
 
 
 if __name__ == '__main__':
-    print('Part1: ', part1('input.txt'))
-    print('Part2: ', part2('input.txt'))
+    print('Part1: ', part1('../data/day24-input.txt'))
+    print('Part2: ', part2('../data/day24-input.txt'))

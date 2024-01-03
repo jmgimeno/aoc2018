@@ -75,5 +75,5 @@ def part2(fname):
         return not_overlaps([parse(line) for line in file])
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt"))
+    print("Part1: ", part1("../data/day3-input.txt"))
+    print("Part2: ", part2("../data/day3-input.txt"))

@@ -111,14 +111,14 @@ def test_guard_mult_minutes():
     assert 240 ==guard_mult_minutes(test_data)
 
 def test_part1():
-    assert 30630 == part1("input.txt")
+    assert 30630 == part1("../data/day4-input.txt")
 
 def test_guard_most_frequenly_sleep_same_minute():
     assert (99, 45) == guard_and_minute_most_frequently_sleep(test_data)
 
 def test_part2():
-    assert 136571 == part2("input.txt")
+    assert 136571 == part2("../data/day4-input.txt")
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt"))
+    print("Part1: ", part1("../data/day4-input.txt"))
+    print("Part2: ", part2("../data/day4-input.txt"))

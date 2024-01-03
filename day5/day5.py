@@ -67,5 +67,5 @@ def part2(fname):
 #     assert 5094 == part2("input.txt")
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt"))
+    print("Part1: ", part1("../data/day5-input.txt"))
+    print("Part2: ", part2("../data/day5-input.txt"))

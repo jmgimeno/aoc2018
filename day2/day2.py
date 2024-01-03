@@ -75,5 +75,5 @@ def part2(fname):
         return common_letters(*correct)
 
 if __name__ == "__main__":
-    print(part1("input.txt"))
-    print(part2("input.txt"))
+    print(part1("../data/day2-input.txt"))
+    print(part2("../data/day2-input.txt"))

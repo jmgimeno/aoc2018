@@ -125,5 +125,5 @@ def test_part1():
 
 
 if __name__ == '__main__':
-    print('Part1', part('input.txt', 10))
-    print('Part2', part('input.txt', 1000000000))
+    print('Part1', part('../data/day18-input.txt', 10))
+    print('Part2', part('../data/day18-input.txt', 1000000000))

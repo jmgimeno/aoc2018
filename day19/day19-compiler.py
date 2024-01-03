@@ -120,5 +120,5 @@ def part2(fname):
 if __name__ == "__main__":
     part1('test_input.txt')
     part2('test_input.txt')
-    part1('input.txt')
-    part2('input.txt')
+    part1('../data/day19-input.txt')
+    part2('../data/day19-input.txt')

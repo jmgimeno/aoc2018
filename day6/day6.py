@@ -108,5 +108,5 @@ def convex_hull(points):
     return hull
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt"))
+    print("Part1: ", part1("../data/day6-input.txt"))
+    print("Part2: ", part2("../data/day6-input.txt"))

@@ -261,7 +261,7 @@ def test_problem():
 
 
 if __name__ == '__main__':
-    with open('input.txt', 'r') as file:
+    with open('../data/day17-input.txt', 'r') as file:
         ground = Ground(line.strip() for line in file)
         ground.run()
         print("Part1:", ground.count() - ground.real_min_y + 1)

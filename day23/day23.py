@@ -1,6 +1,7 @@
 import collections
 import operator
 import re
+
 import z3
 
 line_regexp = re.compile(r'^pos=<(?P<x>-?\d+),(?P<y>-?\d+),(?P<z>-?\d+)>, r=(?P<r>\d+)$')
@@ -75,5 +76,5 @@ def test_part2():
 
 
 if __name__ == '__main__':
-    print('Part1: ', part1('input.txt'))
-    print('Part2: ', part2('input.txt'))
+    print('Part1: ', part1('../data/day23-input.txt'))
+    print('Part2: ', part2('../data/day23-input.txt'))

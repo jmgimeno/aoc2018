@@ -28,14 +28,13 @@
       <sourceFolder url="file://$MODULE_DIR$/day24" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/day25" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Pipenv (aoc2018) (2)" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="renderExternalDocumentation" value="true" />
   </component>
   <component name="TestRunnerService">
-    <option name="projectConfiguration" value="pytest" />
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
   </component>
 </module>

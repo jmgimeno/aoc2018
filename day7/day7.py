@@ -44,7 +44,7 @@ def test_calc_part1():
     assert "CABDFE" == calc_part1(test_data)
 
 def test_part1():
-    assert "CHILFNMORYKGAQXUVBZPSJWDET" == part1("input.txt")
+    assert "CHILFNMORYKGAQXUVBZPSJWDET" == part1("../data/day7-input.txt")
 
 def calc_part2(data, num_workers, cost_fn):
     preconditions = create_preconditions(data)
@@ -86,7 +86,8 @@ def part2(fname, num_workers, cost_fn):
         return calc_part2([parse(line) for line in file], num_workers, cost_fn)
 
 def test_part2():
-    assert (891, 'CINYHLFMRKOGQAXUZPVSBJWDET') == part2("input.txt", 5, lambda task: ord(task) - ord('A') + 61)
+    assert (891, 'CINYHLFMRKOGQAXUZPVSBJWDET') == part2("../data/day7-input.txt", 5, lambda task: ord(task) - ord('A') + 61)
+
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt", 5, lambda task: ord(task) - ord('A') + 61))
+    print("Part1: ", part1("../data/day7-input.txt"))
+    print("Part2: ", part2("../data/day7-input.txt", 5, lambda task: ord(task) - ord('A') + 61))

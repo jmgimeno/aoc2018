@@ -24,4 +24,4 @@ def test_part1():
 
 
 if __name__ == '__main__':
-    print("Part1: ", part1('input.txt', 3))
+    print("Part1: ", part1('../data/day25-input.txt', 3))

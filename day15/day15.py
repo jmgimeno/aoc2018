@@ -1,6 +1,7 @@
 import collections
 import functools
 import heapq
+
 import pytest
 
 
@@ -707,5 +708,5 @@ def test_optimize():
 
 
 if __name__ == '__main__':
-    print("Part1: ", part1('input.txt'))
-    print("Part2: ", part2('input.txt'))
+    print("Part1: ", part1('../data/day15-input.txt'))
+    print("Part2: ", part2('../data/day15-input.txt'))

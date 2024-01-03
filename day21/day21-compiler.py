@@ -109,4 +109,4 @@ def part1(fname):
 
 
 if __name__ == "__main__":
-    part1('input.txt')
+    part1('../data/day21-input.txt')

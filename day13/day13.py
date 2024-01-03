@@ -205,5 +205,5 @@ def test_part2():
     assert (6, 4) == part2("test3.txt")
 
 if __name__ == "__main__":
-    print("Part1", part1("input.txt"))
-    print("Part2", part2("input.txt"))
+    print("Part1", part1("../data/day13-input.txt"))
+    print("Part2", part2("../data/day13-input.txt"))

@@ -31,7 +31,7 @@ def part1(fname):
         return calc_part1(parse(file))
 
 def test_part1():
-    assert 36627 == part1("input.txt")
+    assert 36627 == part1("../data/day8-input.txt")
 
 def calc_part2(data):
     _, tree = read_tree(data, 0)
@@ -58,8 +58,8 @@ def test_calc_part2():
     assert 66 == calc_part2(test_data)
 
 def test_part2():
-    assert 16695 == part2("input.txt")
+    assert 16695 == part2("../data/day8-input.txt")
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt"))
-    print("Part2: ", part2("input.txt"))
+    print("Part1: ", part1("../data/day8-input.txt"))
+    print("Part2: ", part2("../data/day8-input.txt"))

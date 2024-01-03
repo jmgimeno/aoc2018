@@ -1,5 +1,4 @@
 from collections import namedtuple
-from itertools import takewhile
 
 State = namedtuple("State", ["first", "plants", "generation"])
 
@@ -106,5 +105,5 @@ def test_part1():
     assert 325 == part1("test_input.txt", 20)
 
 if __name__ == "__main__":
-    print("Part1: ", part1("input.txt", 20))
-    print("Part2: ", part1("input.txt", 50000000000))
+    print("Part1: ", part1("../data/day12-input.txt", 20))
+    print("Part2: ", part1("../data/day12-input.txt", 50000000000))
